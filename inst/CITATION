@@ -1,0 +1,18 @@
+citHeader("To cite arkhe in publications use:")
+
+citEntry(entry = "Manual",
+  title        = "{arkhe}: Representation of Archaeological Data",
+  author       = c(person("Nicolas", "Frerebeau", role = "aut")),
+  year         = "2019",
+  organization = "Université Bordeaux Montaigne",
+  address      = "Pessac, France",
+  note         = "R package version 0.2.0",
+  url          = "https://doi.org/10.5281/zenodo.3526659",
+
+  textVersion  =
+  paste("Frerebeau, Nicolas (2019).",
+        "arkhe: Representation of Archaeological Data.",
+        "R package version 0.2.0",
+        "Université Bordeaux Montaigne, Pessac, France.",
+        "DOI 10.5281/zenodo.3526659.")
+)
