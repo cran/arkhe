@@ -3,9 +3,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-
-## ----uml, echo=FALSE, fig.cap="UML class diagram of the S4 classes structure.", fig.width=7----
-knitr::include_graphics("classes.png")
+library(nomnoml)
 
 ## ----packages------------------------------------------------------------
 # Load packages
