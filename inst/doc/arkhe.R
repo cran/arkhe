@@ -4,36 +4,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-## ----nomnoml, eval=FALSE, echo=FALSE------------------------------------------
-#  # Compile UML diagrams with the 'nomnoml' package
-#  nomnoml::nomnoml("
-#  [base::matrix||]
-#  [Matrix|-id: character;+dates: list;+coordinates: list|]
-#  
-#  [NumericMatrix||]
-#  [CountMatrix||]
-#  [AbundanceMatrix|+totals: numeric|]
-#  [SimilarityMatrix|+method: character|]
-#  [OccurrenceMatrix||]
-#  
-#  [LogicalMatrix||]
-#  [IncidenceMatrix||]
-#  [StratigraphicMatrix||]
-#  
-#  [base::matrix] <:- [Matrix]
-#  
-#  [Matrix] <:- [NumericMatrix]
-#  [NumericMatrix] <:- [CountMatrix]
-#  [NumericMatrix] <:- [AbundanceMatrix]
-#  [NumericMatrix] <:- [SimilarityMatrix]
-#  [NumericMatrix] <:- [OccurrenceMatrix]
-#  
-#  [Matrix] <:- [LogicalMatrix]
-#  [LogicalMatrix] <:- [IncidenceMatrix]
-#  [LogicalMatrix] <:- [StratigraphicMatrix]
-#  ", png = "vignettes/uml-1.png")
-
-## ----uml, echo=FALSE, fig.cap="UML class diagram of the S4 classes structure.", fig.width=7, fig.height=7, out.width="100%"----
+## ----uml, echo=FALSE, fig.cap="UML class diagram of the S4 classes structure.", fig.width=5, fig.height=7, out.width="75%"----
 knitr::include_graphics("uml-1.png", error = TRUE)
 
 ## ----packages-----------------------------------------------------------------
@@ -43,11 +14,12 @@ library(arkhe)
 ## ----create-------------------------------------------------------------------
 set.seed(12345)
 ## Create a count data matrix
+## Data are rounded to zero decimal places, then coerced with as.integer
 CountMatrix(data = sample(0:10, 100, TRUE),
             nrow = 10, ncol = 10)
 
 ## Create an incidence (presence/absence) matrix
-## Numeric values are coerced to logical as by as.logical
+## Data are coerced to logical as by as.logical
 IncidenceMatrix(data = sample(0:1, 100, TRUE),
                 nrow = 10, ncol = 10)
 
@@ -59,7 +31,7 @@ A0 <- matrix(data = sample(0:10, 100, TRUE), nrow = 10, ncol = 10)
 A1 <- as_count(A0)
 
 ## Coerce to relative frequencies
-B <- as_abundance(A1)
+B <- as_composition(A1)
 
 ## Row sums are internally stored before coercing to a frequency matrix
 ## (use get_totals() to get these values)

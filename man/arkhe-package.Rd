@@ -7,39 +7,52 @@
 \alias{arkhe}
 \title{arkhe: Representation of Archaeological Data}
 \description{
+\if{html}{\figure{logo.png}{options: align='right' alt='logo' width='120'}}
+
 A collection of classes that represent
     archaeological data. This package provides a set of S4 classes that
-    extend the basic matrix data type (absolute/relative frequency,
-    presence/absence data, co-occurrence matrix, etc.) upon which package
-    developers can build subclasses. It also provides a set of generic
-    methods (mutators and coercion mechanisms) and functions (e.g.
-    predicates). In addition, a few classes of general interest (e.g. that
-    represent stratigraphic relationships) are implemented.
+    represent different special types of matrix (absolute/relative
+    frequency, presence/absence data, co-occurrence matrix, etc.) upon
+    which package developers can build subclasses. It also provides a set
+    of generic methods (mutators and coercion mechanisms) and functions
+    (e.g. summary statistics, predicates). In addition, a few classes of 
+    general interest (e.g. that represent stratigraphic relationships) 
+    are implemented.
 }
 \details{
 \tabular{ll}{
- \strong{Package:} \tab arkhe \cr
- \strong{Type:} \tab Package \cr
- \strong{Version:} \tab 0.2.2 \cr
- \strong{License:} \tab GPL-3 \cr
- \strong{DOI:} \tab \href{https://doi.org/10.5281/zenodo.3526659}{10.5281/zenodo.3526659}
+\strong{Package:} \tab arkhe \cr
+\strong{Type:} \tab Package \cr
+\strong{Version:} \tab 0.3.0 \cr
+\strong{License:} \tab GPL-3 \cr
+\strong{DOI:} \tab \doi{10.5281/zenodo.3526659} \cr
 }
 }
+\section{Package options}{
+
+\code{arkhe} uses the following \code{\link[=options]{options()}} to configure behaviour:
+\itemize{
+\item \code{arkhe.autodetect}: a \code{\link{logical}} scalar.
+\item \code{arkhe.verbose}: a \code{\link{logical}} scalar. Should \R report extra information
+on progress?
+}
+}
+
 \seealso{
 Useful links:
 \itemize{
-  \item \url{http://arkhe.archaeo.science}
-  \item \url{https://github.com/nfrerebeau/arkhe}
-  \item \url{https://cran.r-project.org/package=arkhe}
-  \item Report bugs at \url{https://github.com/nfrerebeau/arkhe/issues}
+  \item \url{https://arkhe.tesselle.org}
+  \item \url{https://github.com/tesselle/arkhe}
+  \item Report bugs at \url{https://github.com/tesselle/arkhe/issues}
 }
 
 }
 \author{
-\strong{Full list of authors and contributors} (alphabetic order)
+\strong{Full list of authors and contributors} (alphabetic order):
 
 \tabular{ll}{
- Nicolas Frerebeau \tab \emph{Université Bordeaux Montaigne, France} \cr
+Nicolas Frerebeau \tab \emph{Université Bordeaux Montaigne, France} \cr
+Brice Lebrun \tab \emph{Université Bordeaux Montaigne, France} \cr
 }
 
 \strong{Package maintainer}

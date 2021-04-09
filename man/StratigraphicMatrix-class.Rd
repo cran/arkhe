@@ -10,73 +10,10 @@ An S4 class to represent a stratigraphic matrix.
 }
 \details{
 A stratigraphic matrix represents directed relationships between
- stratigraphic units. A stratigraphic matrix is an adjacency matrix (a non
- symmetric square matrix with zeros on its main diagonal), suitable to build
- a directed acyclic graph (DAG).
+stratigraphic units. A stratigraphic matrix is an adjacency matrix (a non
+symmetric square matrix with zeros on its main diagonal), suitable to build
+a directed acyclic graph (DAG).
 }
-\section{Slots}{
-
-\describe{
-\item{\code{units}}{A \code{\link{character}} vector giving the stratigraphic unit
-names.}
-}}
-
-\section{Matrix ID}{
-
- When a matrix is first created, an identifier is generated (UUID v4).
- This ID is preserved when coercing to another class. Thus, the object ID is
- unique within the same class, but two objects of different classes can have
- the same ID. This makes it possible to identify objects representing the
- same initial data and associate them with the results of specific
- computations.
-}
-
-\section{Get and set}{
-
- In the code snippets below, \code{x} is a \code{*Matrix} object.
- \describe{
-  \item{\code{get_id(x)}}{Get the ID of \code{x}.}
-  \item{\code{get_dates(x)} and \code{set_dates(x) <- value}}{Get or set
-  the dates of \code{x}.}
-  \item{\code{get_coordinates(x)} and \code{set_coordinates(x) <- value}}{Get
-  or set the geographical coordinates of \code{x}.}
- }
-}
-
-\section{Access}{
-
- In the code snippets below, \code{x} is a \code{*Matrix} object.
- \describe{
-  \item{\code{dim(x)}}{Returns the dimension of \code{x}.}
-  \item{\code{nrow(x)}}{Returns the number of rows present in \code{x}.}
-  \item{\code{ncol(x)}}{Returns the number of columns present in \code{x}.}
-  \item{\code{dimnames(x)}, \code{dimnames(x) <- value}}{Retrieves or sets
-  the row dimnames of \code{x} according to \code{value}.}
-  \item{\code{rownames(x)}, \code{rownames(x) <- value}}{Retrieves or sets
-  the row names of \code{x} according to \code{value}.}
-  \item{\code{colnames(x)}, \code{colnames(x) <- value}}{Retrieves or sets
-  the column names of \code{x} according to \code{value}.}
- }
-}
-
-\section{Subset}{
-
- In the code snippets below, \code{x} is a \code{*Matrix} object.
- \describe{
-  \item{\code{x[i, j]}}{Extracts elements selected by subscripts \code{i}
-  and \code{j}. Indices are \code{\link{numeric}}, \code{\link{integer}} or
-  \code{\link{character}} vectors or empty (missing) or \code{NULL}.
-  Numeric values are coerced to \code{\link{integer}} as by
-  \code{\link{as.integer}} (and hence truncated towards zero).
-  Character vectors will be matched to the name of the elements.
-  An empty index (a comma separated blank) indicates that all
-  entries in that dimension are selected.
-  Returns an object of the same class as \code{x}.}
-  \item{\code{x[[i]]}}{Extracts a single element selected by subscript
-  \code{i}.}
- }
-}
-
 \examples{
 # Principles of Archaeological Stratigraphy, fig. 12
 harris <- matrix(
@@ -99,20 +36,16 @@ harris <- matrix(
 )
 
 strati <- as_stratigraphy(harris)
-get_units(strati)
 }
 \seealso{
-\linkS4class{LogicalMatrix}
+\code{\link[=as_stratigraphy]{as_stratigraphy()}}
 
 Other matrix: 
-\code{\link{AbundanceMatrix-class}},
+\code{\link{CompositionMatrix-class}},
 \code{\link{CountMatrix-class}},
+\code{\link{DataMatrix}},
 \code{\link{IncidenceMatrix-class}},
-\code{\link{LogicalMatrix-class}},
-\code{\link{Matrix-class}},
-\code{\link{NumericMatrix-class}},
 \code{\link{OccurrenceMatrix-class}},
-\code{\link{SimilarityMatrix-class}},
 \code{\link{coerce}()}
 }
 \author{

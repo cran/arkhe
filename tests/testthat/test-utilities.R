@@ -1,6 +1,3 @@
-context("Utilities")
-
-# Test helpers
 test_that("Compact", {
   expect_length(compact(is.null, list("A", NULL, "B")), 2)
 })
@@ -28,29 +25,20 @@ test_that("NULL OR operator", {
   expect_equal(NULL %||% 1, 1)
   expect_equal(0 %||% 1, 0)
 })
-test_that("Row and column names", {
-  mtx <- matrix(sample(1:10, 100, TRUE), ncol = 10)
+test_that("UUID", {
+  id1 <- generate_uuid(seed = 12345)
+  id2 <- generate_uuid(seed = 54321)
 
-  X <- make_rownames(mtx)
-  expect_equal(rownames(X), as.character(seq_len(10)))
+  expect_type(id1, "character")
+  expect_type(id2, "character")
 
-  Y <- make_colnames(mtx)
-  expect_equal(colnames(Y), paste0("V", seq_len(10)))
+  expect_equal(nchar(id1), 36)
+  expect_equal(nchar(id2), 36)
 
-  Z <- make_dimnames(mtx)
-  expect_equal(dimnames(Z), list(as.character(seq_len(10)),
-                                 paste0("V", seq_len(10))))
+  expect_true(is_uuid(id1))
+  expect_true(is_uuid(id2))
 
-  expect_error(make_rownames(LETTERS),
-               "A matrix or data.frame is expected.")
-  expect_error(make_colnames(LETTERS),
-               "A matrix or data.frame is expected.")
-
-  rownames(mtx) <- LETTERS[seq_len(10)]
-  A <- rownames_to_column(mtx, factor = TRUE)
-  expect_equal(ncol(A), 11)
-  expect_true(is.factor(A[[1]]))
-  A <- rownames_to_column(mtx, factor = FALSE)
-  expect_true(!is.factor(A[[1]]))
-  expect_error(rownames_to_column(LETTERS))
+  expect_error(check_uuid(character(0)))
+  expect_error(check_uuid("X"))
+  expect_warning(check_uuid("00000000-0000-4000-a000-000000000000"))
 })

@@ -4,14 +4,11 @@
 \alias{predicate-utils}
 \alias{is_empty}
 \alias{is_named}
-\alias{is_uuid}
 \title{Utility Predicates}
 \usage{
 is_empty(x)
 
 is_named(x)
-
-is_uuid(x)
 }
 \arguments{
 \item{x}{An object to be tested.}
@@ -20,13 +17,13 @@ is_uuid(x)
 A \code{\link{logical}} scalar.
 }
 \description{
-\code{is_empty} checks if a vector or list is empty.
+\itemize{
+\item \code{is_empty()} checks if a vector or list is empty.
+\item \code{is_missing()} checks if a vector or list contains missing values.
+\item \code{is_named()} checks if an object is named.
+\item \code{is_uuid()} checks if a string is a canonically formatted UUID that is
+version 1 through 5 and is the appropriate Variant as per RFC4122.
 }
-\details{
-\code{is_named} checks if an object is named.
-
-\code{is_uuid} checks if a string is a canonically formatted UUID that is
-Version 1 through 5 and is the appropriate Variant as per RFC4122.
 }
 \seealso{
 Other predicates: 
@@ -38,4 +35,3 @@ Other predicates:
 \code{\link{predicate-type}}
 }
 \concept{predicates}
-\keyword{internal}

@@ -1,28 +1,18 @@
-context("Show")
+test_that("Integer matrix", {
+  A <- .CountMatrix()
+  expect_output(show(A), "CountMatrix")
 
-test_that("Logical matrix", {
-  A <- methods::new("LogicalMatrix")
-  expect_output(show(A), "An object of class \"LogicalMatrix\"")
-
-  B <- .IncidenceMatrix()
-  expect_output(show(B), "presence/absence data matrix")
-
-  C <- .StratigraphicMatrix()
-  expect_output(show(C), "stratigraphic matrix")
+  B <- .OccurrenceMatrix()
+  expect_output(show(B), "OccurrenceMatrix")
 })
 test_that("Numeric matrix", {
-  A <- methods::new("NumericMatrix")
-  expect_output(show(A), "An object of class \"NumericMatrix\"")
+  A <- .CompositionMatrix()
+  expect_output(show(A), "CompositionMatrix")
+})
+test_that("Logical matrix", {
+  A <- .IncidenceMatrix()
+  expect_output(show(A), "IncidenceMatrix")
 
-  B <- .CountMatrix()
-  expect_output(show(B), "absolute frequency matrix")
-
-  C <- .AbundanceMatrix()
-  expect_output(show(C), "relative frequency matrix")
-
-  D <- .SimilarityMatrix()
-  expect_output(show(D), "similarity matrix")
-
-  E <- .OccurrenceMatrix()
-  expect_output(show(E), "co-occurrence matrix")
+  B <- .StratigraphicMatrix()
+  expect_output(show(B), "StratigraphicMatrix")
 })

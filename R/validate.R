@@ -2,257 +2,117 @@
 #' @include AllClasses.R
 NULL
 
-# Matrix =======================================================================
-setValidity(
-  Class = "Matrix",
-  method = function(object) {
-    # Get data
-    data <- S3Part(object, strictS3 = TRUE, "matrix")
-    id <- object@id
-    dates <- object@dates
-    coordinates <- object@coordinates
-
-    # Check
-    errors <- list(
-      # Check data
-      catch_conditions(check_missing(data)),
-      catch_conditions(check_infinite(data)),
-      # Check id
-      catch_conditions(check_uuid(id))
-    )
-    if (nrow(data) > 0 && length(dates) != 0) {
-      errors <- append(
-        errors,
-        list(
-          # Check dates
-          catch_conditions(check_length(dates, nrow(data))),
-          catch_conditions(check_lengths(dates, 2)),
-          catch_conditions(check_names(dates, margin = 1, rownames(data)))
-        )
-      )
-    }
-    if (nrow(data) > 0 && length(coordinates) != 0) {
-      errors <- append(
-        errors,
-        list(
-          # Check coordinates
-          catch_conditions(check_length(coordinates, nrow(data))),
-          catch_conditions(check_lengths(coordinates, 3)),
-          catch_conditions(check_names(coordinates, margin = 1, rownames(data)))
-        )
-      )
-    }
-
-    # Return errors if any
-    check_class(object, errors)
-  }
-)
-
-# NumericMatrix ================================================================
-setValidity(
-  Class = "NumericMatrix",
-  method = function(object) {
-    # Get data
-    data <- S3Part(object, strictS3 = TRUE, "matrix")
-
-    if (nrow(data) > 0) {
-      errors <- list(
-        # Check data
-        catch_conditions(check_type(data, "numeric"))
-      )
-    } else {
-      errors <- list()
-    }
-
-    # Return errors if any
-    check_class(object, errors)
-  }
-)
-
-## CountMatrix -----------------------------------------------------
-setValidity(
-  Class = "CountMatrix",
-  method = function(object) {
-    # Get data
-    data <- methods::S3Part(object, strictS3 = TRUE, "matrix")
-    # dates <- object@dates
-    # coordinates <- object@coordinates
-
-    errors <- list(
-      # Check data
-      catch_conditions(check_numbers(data, "positive", strict = FALSE)),
-      catch_conditions(check_numbers(data, "whole"))
-    )
-    # Messages
-    # TODO: warning instead of message?
-    # if (all(is_binary(data)))
-    #   message("Your matrix contains only 0s and 1s.\n",
-    #           "You should consider using an incidence matrix instead.")
-
-    # Return errors, if any
-    check_class(object, errors)
-  }
-)
-
-## AbundanceMatrix -------------------------------------------------------------
+# AbundanceMatrix ==============================================================
 setValidity(
   Class = "AbundanceMatrix",
   method = function(object) {
     # Get data
-    data <- methods::S3Part(object, strictS3 = TRUE, "matrix")
-    totals <- object@totals
-    # dates <- object@dates
-    # coordinates <- object@coordinates
+    samples <- object@samples
+    groups <- object@groups
 
-    errors <- list(
-      # Check data
-      catch_conditions(check_numbers(data, "positive", strict = FALSE)),
-      # Check totals
-      catch_conditions(check_length(totals, nrow(data)))
+    cnd <- list(
+      catch_conditions(check_length(samples, nrow(object), strict = FALSE)),
+      catch_conditions(check_length(groups, nrow(object), strict = FALSE))
     )
-    if (nrow(data) > 0) {
-      errors <- append(
-        errors,
-        list(
-          # Check totals
-          catch_conditions(check_constant(rowSums(data)))
-        )
-      )
-    }
-    # print(totals)
-    # Return errors, if any
-    check_class(object, errors)
+
+    # Return cnd, if any
+    check_class(object, cnd)
   }
 )
 
+# DataMatrix ===================================================================
+setValidity(
+  Class = "IntegerMatrix",
+  method = function(object) {
+    cnd <- list(catch_conditions(check_type(object, "integer")))
+    check_class(object, cnd)
+  }
+)
+setValidity(
+  Class = "NumericMatrix",
+  method = function(object) {
+    cnd <- list(catch_conditions(check_type(object, "numeric")))
+    check_class(object, cnd)
+  }
+)
+setValidity(
+  Class = "LogicalMatrix",
+  method = function(object) {
+    cnd <- list(catch_conditions(check_type(object, "logical")))
+    check_class(object, cnd)
+  }
+)
+
+# IntegerMatrix ================================================================
+## CountMatrix -----------------------------------------------------------------
+setValidity(
+  Class = "CountMatrix",
+  method = function(object) {
+    cnd <- list(
+      catch_conditions(
+        check_numbers(object, "positive", strict = FALSE, na.rm = TRUE)
+      )
+    )
+    check_class(object, cnd)
+  }
+)
 ## OccurrenceMatrix ------------------------------------------------------------
 setValidity(
   Class = "OccurrenceMatrix",
   method = function(object) {
     # Get data
-    data <- methods::S3Part(object, strictS3 = TRUE, "matrix")
+    total <- object@total
 
-    errors <- list(
-      # Check data
-      catch_conditions(check_symmetric(data))
+    cnd <- list(
+      catch_conditions(check_symmetric(object)),
+      catch_conditions(
+        check_numbers(object, "positive", strict = FALSE, na.rm = TRUE)
+      ),
+      catch_conditions(check_scalar(total, "integer", strict = FALSE))
     )
 
-    # Return errors, if any
-    check_class(object, errors)
+    # Return cnd, if any
+    check_class(object, cnd)
   }
 )
 
-## SimilarityMatrix ------------------------------------------------------------
+# NumericMatrix ================================================================
+## CompositionMatrix -----------------------------------------------------------
 setValidity(
-  Class = "SimilarityMatrix",
+  Class = "CompositionMatrix",
   method = function(object) {
     # Get data
-    data <- methods::S3Part(object, strictS3 = TRUE, "matrix")
-    method <- object@method
+    total <- object@total
 
-    errors <- list(
-      # Check data
-      catch_conditions(check_symmetric(data)),
-      # Check method
-      catch_conditions(check_scalar(method, "character")),
-      catch_conditions(check_missing(method))
+    cnd <- list(
+      catch_conditions(
+        check_numbers(object, "positive", strict = FALSE, na.rm = TRUE)
+      ),
+      catch_conditions(check_numbers(total, "positive", strict = FALSE)),
+      catch_conditions(check_length(total, nrow(object), strict = FALSE))
     )
 
-    # Return errors, if any
-    check_class(object, errors)
+    # Return cnd, if any
+    check_class(object, cnd)
   }
 )
 
 # LogicalMatrix ================================================================
-setValidity(
-  Class = "LogicalMatrix",
-  method = function(object) {
-    # Get data
-    data <- S3Part(object, strictS3 = TRUE, "matrix")
-
-    if (nrow(data) > 0) {
-      errors <- list(
-        # Check data
-        catch_conditions(check_type(data, "logical"))
-      )
-    } else {
-      errors <- list()
-    }
-
-    # Return errors if any
-    check_class(object, errors)
-  }
-)
-
-# -------------------------------------------------------------- IncidenceMatrix
-# setValidity(
-#   Class = "IncidenceMatrix",
-#   method = function(object) {
-#
-#   }
-# )
-
-# ---------------------------------------------------------- StratigraphicMatrix
+## StratigraphicMatrix ---------------------------------------------------------
 setValidity(
   Class = "StratigraphicMatrix",
   method = function(object) {
-    # Get data
-    data <- methods::S3Part(object, strictS3 = TRUE, "matrix")
-    units <- object@units
-
-    if (nrow(data) > 0) {
-      errors <- list(
+    if (nrow(object) > 0) {
+      cnd <- list(
         # Check data
-        catch_conditions(check_square(data)),
-        catch_conditions(check_dag(data)),
-        # Check unit names
-        catch_conditions(check_length(units, nrow(data)))
+        catch_conditions(check_square(object)),
+        catch_conditions(check_dag(object))
       )
     } else {
-      errors <- list()
+      cnd <- list()
     }
 
-    # Return errors, if any
-    check_class(object, errors)
+    # Return cnd, if any
+    check_class(object, cnd)
   }
 )
-
-# =================================================================== Diagnostic
-#' Class Diagnostic
-#'
-#' @param object An object to which error messages are related.
-#' @param conditions A \code{\link{list}} of condition messages.
-#' @param verbose A \code{\link{logical}} scalar: should extra information
-#'  be reported?
-#' @return
-#'  Throw an error if \code{conditions} is of non-zero length, returns \code{TRUE}
-#'  if not.
-#' @author N. Frerebeau
-#' @keywords internal error
-#' @noRd
-check_class <- function(object, conditions) {
-  cnd <- compact(is_empty, conditions)
-  cnd <- unlist(cnd, recursive = FALSE)
-
-  # Check if any warning
-  wrn_idx <- vapply(X = cnd, FUN = is_warning, FUN.VALUE = logical(1))
-  if (any(wrn_idx)) {
-    wrn_msg <- vapply(X = cnd[wrn_idx], FUN = `[[`,
-                      FUN.VALUE = character(1), "message")
-    wrn <- sprintf("<%s> instance initialization:\n%s", class(object),
-                   paste0("* ", unlist(wrn_msg), collapse = "\n"))
-    throw_warning("arkhe_warning_class", wrn, call = NULL)
-  }
-
-  # Check if any error
-  err_idx <- vapply(X = cnd, FUN = is_error, FUN.VALUE = logical(1))
-  if (any(err_idx)) {
-    err_msg <- vapply(X = cnd[err_idx], FUN = `[[`,
-                      FUN.VALUE = character(1), "message")
-    err <- sprintf("<%s> instance initialization:\n%s", class(object),
-                   paste0("* ", err_msg, collapse = "\n"))
-    throw_error("arkhe_error_class", err, call = NULL)
-  }
-
-  return(TRUE)
-}

@@ -1,19 +1,18 @@
 # PREDICATES
 
+# Helpers ======================================================================
 #' Utility Predicates
 #'
-#' \code{is_empty} checks if a vector or list is empty.
-#'
-#' \code{is_named} checks if an object is named.
-#'
-#' \code{is_uuid} checks if a string is a canonically formatted UUID that is
-#' Version 1 through 5 and is the appropriate Variant as per RFC4122.
+#' * `is_empty()` checks if a vector or list is empty.
+#' * `is_missing()` checks if a vector or list contains missing values.
+#' * `is_named()` checks if an object is named.
+#' * `is_uuid()` checks if a string is a canonically formatted UUID that is
+#'   version 1 through 5 and is the appropriate Variant as per RFC4122.
 #' @param x An object to be tested.
-#' @return A \code{\link{logical}} scalar.
+#' @return A [`logical`] scalar.
 #' @family predicates
 #' @name predicate-utils
 #' @rdname predicate-utils
-#' @keywords internal
 NULL
 
 #' @export
@@ -24,24 +23,22 @@ is_empty <- function(x) {
 #' @export
 #' @rdname predicate-utils
 is_named <- function(x) {
-  length(names(x)) != 0
+  !is_empty(names(x))
 }
-#' @export
-#' @rdname predicate-utils
+
 is_uuid <- function(x) {
   pattern <- "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
   grepl(pattern, x)
 }
 
-# ==============================================================================
+# Type =========================================================================
 #' Type Predicates
 #'
 #' @param x An object to be tested.
-#' @return A \code{\link{logical}} scalar.
+#' @return A [`logical`] scalar.
 #' @family predicates
 #' @name predicate-type
 #' @rdname predicate-type
-#' @keywords internal
 NULL
 
 #' @rdname predicate-type
@@ -90,15 +87,14 @@ is_message <- function(x) {
   inherits(x, "simpleMessage") || inherits(x, "message")
 }
 
-# ==============================================================================
+# Scalar =======================================================================
 #' Scalar Type Predicates
 #'
 #' @param x An object to be tested.
-#' @return A \code{\link{logical}} scalar.
+#' @return A [`logical`] scalar.
 #' @family predicates
 #' @name predicate-scalar
 #' @rdname predicate-scalar
-#' @keywords internal
 NULL
 
 #' @rdname predicate-scalar
@@ -134,88 +130,95 @@ is_scalar_logical <- function(x) {
   is_logical(x) && length(x) == 1
 }
 
-# ==============================================================================
+# Numeric ======================================================================
 #' Numeric Predicates
 #'
 #' Check numeric objects:
-#'
-#' \code{is_odd} and \code{is_even} check if a number is odd or even,
-#' respectively.
-#'
-#' \code{is_positive} checks if an object contains only (strictly) positive
-#' numbers.
-#'
-#' \code{is_binary} checks if an object contains only \eqn{0}s and \eqn{1}s.
-#'
-#' \code{is_whole} checks if an object only contains whole numbers.
-#' @param x A \code{\link{numeric}} object to be tested.
-#' @param tolerance A \code{\link{numeric}} scalar giving the
-#'  tolerance to check within.
-#' @param strict A \code{\link{logical}} scalar: should missing values
-#'  (including \code{NaN}) be omitted?
-#' @return A \code{\link{logical}} vector.
+#' * `is_zero()` checks if an object contains only zeros.
+#' * `is_odd()` and `is_even()` check if a number is odd or even, respectively.
+#' * `is_positive()` and `is_negative` check if an object contains only
+#'   (strictly) positive or negative numbers.
+#' * `is_whole()` checks if an object only contains whole numbers.
+#' @param x A [`numeric`] object to be tested.
+#' @param tolerance A [`numeric`] scalar giving the tolerance to check within.
+#' @param strict A [`logical`] scalar: should strict inequality be used?
+#' @param finite A [`logical`] scalar: should non-[`finite`] values also be
+#'  removed?
+#' @param na.rm A [`logical`] scalar: should missing values (including `NaN`)
+#'  be omitted?
+#' @return A [`logical`] vector.
 #' @family predicates
 #' @name predicate-numeric
 #' @rdname predicate-numeric
-#' @keywords internal
 NULL
 
+#' @rdname predicate-numeric
+is_missing <- function(x, finite = FALSE) {
+  if (finite) !is.finite(x) else is.na(x)
+}
 #' @export
 #' @rdname predicate-numeric
-is_odd <- function(x) { # impair
+is_zero <- function(x, na.rm = FALSE) {
   check_type(x, "numeric")
+  if (na.rm) x <- stats::na.omit(x)
+  x == 0
+}
+#' @export
+#' @rdname predicate-numeric
+is_odd <- function(x, na.rm = FALSE) { # impair
+  check_type(x, "numeric")
+  if (na.rm) x <- stats::na.omit(x)
   as.logical(x %% 2)
 }
 #' @export
 #' @rdname predicate-numeric
-is_even <- function(x) { # pair
+is_even <- function(x, na.rm = FALSE) { # pair
   check_type(x, "numeric")
+  if (na.rm) x <- stats::na.omit(x)
   !as.logical(x %% 2)
 }
 #' @export
 #' @rdname predicate-numeric
-is_positive <- function(x, strict = FALSE) {
+is_positive <- function(x, strict = FALSE, na.rm = FALSE) {
   check_type(x, "numeric")
+  if (na.rm) x <- stats::na.omit(x)
   if (strict) x > 0 else x >= 0
 }
 #' @export
 #' @rdname predicate-numeric
-is_whole <- function(x, tolerance = .Machine$double.eps^0.5) {
+is_negative <- function(x, strict = FALSE, na.rm = FALSE) {
   check_type(x, "numeric")
-  abs(x - round(x, digits = 0)) <= tolerance
+  if (na.rm) x <- stats::na.omit(x)
+  if (strict) x < 0 else x <= 0
 }
 #' @export
 #' @rdname predicate-numeric
-is_binary <- function(x) {
+is_whole <- function(x, na.rm = FALSE, tolerance = .Machine$double.eps^0.5) {
   check_type(x, "numeric")
-  x %in% c(0, 1)
+  if (na.rm) x <- stats::na.omit(x)
+  abs(x - round(x, digits = 0)) <= tolerance
 }
 
 #' Numeric Trend Predicates
 #'
 #' Check numeric objects:
-#'
-#' \code{is_equal} checks for equality among all elements of a vector.
-#'
-#' \code{is_increasing} and \code{is_decreasing} check if a sequence of numbers
-#' is monotonically increasing or decreasing, respectively.
-#'
-#' \code{is_overlapping} checks if two data ranges overlap at all.
-#' @param x,y A \code{\link{numeric}} object to be tested.
-#' @param tolerance A \code{\link{numeric}} scalar giving the
-#'  tolerance to check within.
-#' @param na.rm A \code{\link{logical}} scalar: should missing values
-#'  (including \code{NaN}) be omitted?
-#' @return A \code{\link{logical}} scalar.
+#' * `is_constant()` checks for equality among all elements of a vector.
+#' * `is_increasing()` and `is_decreasing()` check if a sequence of numbers
+#'   is monotonically increasing or decreasing, respectively.
+#' * `is_overlapping()` checks if two data ranges overlap at all.
+#' @param x A [`numeric`] object to be tested.
+#' @param tolerance A [`numeric`] scalar giving the tolerance to check within.
+#' @param na.rm A [`logical`] scalar: should missing values (including `NaN`)
+#'  be omitted?
+#' @return A [`logical`] scalar.
 #' @family predicates
 #' @name predicate-trend
 #' @rdname predicate-trend
-#' @keywords internal
 NULL
 
 #' @export
 #' @rdname predicate-trend
-is_equal <- function(x, tolerance = .Machine$double.eps^0.5, na.rm = TRUE) {
+is_constant <- function(x, tolerance = .Machine$double.eps^0.5, na.rm = TRUE) {
   check_type(x, "numeric")
 
   k <- abs(max(x, na.rm = na.rm) - min(x, na.rm = na.rm)) <= tolerance
@@ -240,27 +243,17 @@ is_decreasing <- function(x, na.rm = TRUE) {
   if (is.na(k)) k <- FALSE
   k
 }
-#' @export
-#' @rdname predicate-trend
-is_overlapping <- function(x, y) {
-  check_type(x, "numeric")
-  check_type(y, "numeric")
 
-  min(x) <= max(y) && max(x) >= min(y)
-}
-
-# ==============================================================================
+# Matrix =======================================================================
 #' Matrix Predicates
 #'
-#' \code{is_square} checks if a matrix is square.
-#'
-#' \code{is_symmetric} checks if a matrix is symmetric.
-#' @param x A \code{\link{matrix}} to be tested.
-#' @return A \code{\link{logical}} scalar.
+#' * `is_square()` checks if a matrix is square.
+#' * `is_symmetric()` checks if a matrix is symmetric.
+#' @param x A [`matrix`] to be tested.
+#' @return A [`logical`] scalar.
 #' @family predicates
 #' @name predicate-matrix
 #' @rdname predicate-matrix
-#' @keywords internal
 NULL
 
 #' @export
@@ -274,17 +267,16 @@ is_symmetric <- function(x) {
   if (is.matrix(x)) identical(x, t(x)) else FALSE
 }
 
-# ==============================================================================
+# Graph ========================================================================
 #' Graph Predicates
 #'
-#' \code{is_dag} checks if a graph has a topological ordering (i.e. is a
-#' directed acyclic graph) using Kahn's algorithm.
-#' @param x An adjacency \code{\link{matrix}} to be tested.
-#' @return A \code{\link{logical}} scalar.
+#' `is_dag()` checks if a graph has a topological ordering (i.e. is a directed
+#' acyclic graph) using Kahn's algorithm.
+#' @param x An adjacency [`matrix`] to be tested.
+#' @return A [`logical`] scalar.
 #' @references
-#'  Kahn, A. B. (1962). Topological sorting of large networks.
-#'  \emph{Communications of the ACM}, 5(11), p. 558-562.
-#'  DOI: \href{https://doi.org/10.1145/368996.369025}{10.1145/368996.369025}.
+#'  Kahn, A. B. (1962). Topological sorting of large networks. *Communications
+#'  of the ACM*, 5(11), p. 558-562. \doi{10.1145/368996.369025}.
 #' @family predicates
 #' @name predicate-graph
 #' @rdname predicate-graph

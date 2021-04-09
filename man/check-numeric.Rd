@@ -6,14 +6,15 @@
 \alias{check_constant}
 \title{Check Numeric Values}
 \usage{
-check_numbers(x, expected = c("positive", "whole", "odd", "even"), ...)
+check_numbers(x, expected, ...)
 
 check_constant(x)
 }
 \arguments{
 \item{x}{A \code{\link{numeric}} object to be checked.}
 
-\item{expected}{An appropriate expected value.}
+\item{expected}{A \code{\link{character}} string specifying the expected
+value. It must be one of "\code{positive}", "\code{whole}", "\code{odd}" or "\code{even}".}
 }
 \value{
 Throw an error, if any.

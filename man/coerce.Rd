@@ -3,30 +3,38 @@
 \docType{methods}
 \name{coerce}
 \alias{coerce}
+\alias{as_long}
+\alias{as_long-method}
 \alias{as_count}
 \alias{as_count-method}
+\alias{as_composition}
+\alias{as_composition-method}
 \alias{as_abundance}
 \alias{as_abundance-method}
 \alias{as_incidence}
 \alias{as_incidence-method}
 \alias{as_occurrence}
 \alias{as_occurrence-method}
-\alias{as_similarity}
-\alias{as_similarity-method}
 \alias{as_features}
 \alias{as_features-method}
 \alias{as_stratigraphy}
 \alias{as_stratigraphy-method}
 \alias{as_count,ANY-method}
+\alias{as_composition,ANY-method}
 \alias{as_abundance,ANY-method}
 \alias{as_incidence,ANY-method}
 \alias{as_occurrence,ANY-method}
-\alias{as_similarity,ANY-method}
 \alias{as_stratigraphy,ANY-method}
-\alias{as_features,Matrix-method}
+\alias{as_long,matrix-method}
+\alias{as_long,AbundanceMatrix-method}
+\alias{as_features,AbundanceMatrix-method}
 \title{Coerce}
 \usage{
+as_long(from, ...)
+
 as_count(from)
+
+as_composition(from)
 
 as_abundance(from)
 
@@ -34,13 +42,13 @@ as_incidence(from)
 
 as_occurrence(from)
 
-as_similarity(from)
-
 as_features(from)
 
 as_stratigraphy(from)
 
 \S4method{as_count}{ANY}(from)
+
+\S4method{as_composition}{ANY}(from)
 
 \S4method{as_abundance}{ANY}(from)
 
@@ -48,15 +56,25 @@ as_stratigraphy(from)
 
 \S4method{as_occurrence}{ANY}(from)
 
-\S4method{as_similarity}{ANY}(from)
-
 \S4method{as_stratigraphy}{ANY}(from)
 
-\S4method{as_features}{Matrix}(from)
+\S4method{as_long}{matrix}(from, factor = FALSE, reverse = FALSE)
+
+\S4method{as_long}{AbundanceMatrix}(from, factor = FALSE, reverse = FALSE)
+
+\S4method{as_features}{AbundanceMatrix}(from)
 }
 \arguments{
-\item{from}{A numeric \code{\link{matrix}} or \code{\link{data.frame}} to be
-coerced.}
+\item{from}{An object to be coerced.}
+
+\item{...}{Currently not used.}
+
+\item{factor}{A \code{\link{logical}} scalar: should character string be
+coerced to \code{\link{factor}}? Default to \code{FALSE}, if \code{TRUE} the original ordering is
+preserved.}
+
+\item{reverse}{A \code{\link{logical}} scalar: should the order of factor levels be
+reversed? Only used if \code{factor} is \code{TRUE}. Useful for plotting.}
 }
 \value{
 A coerced object.
@@ -65,41 +83,47 @@ A coerced object.
 Coerce
 }
 \details{
-The following methods coerce a \code{matrix} or \code{data.frame} to a
- \code{*Matrix} object:
+The following methods coerce an object to a \verb{*Matrix} object:
 
- \tabular{lll}{
-  \strong{Method} \tab \strong{Target} \tab \strong{Details} \cr
-  \code{as_count} \tab \linkS4class{CountMatrix} \tab absolute frequency data \cr
-  \code{as_abundance} \tab \linkS4class{AbundanceMatrix} \tab relative frequency data \cr
-  \code{as_incidence} \tab \linkS4class{IncidenceMatrix} \tab presence/absence data \cr
-  \code{as_occurrence} \tab \linkS4class{OccurrenceMatrix} \tab co-occurrence \cr
-  \code{as_similarity} \tab \linkS4class{SimilarityMatrix} \tab (dis)similarity \cr
-  \code{as_stratigraphy} \tab \linkS4class{StratigraphicMatrix} \tab stratigraphic relationships
- }
+\tabular{lll}{
+\strong{Method} \tab \strong{Target} \tab \strong{Details} \cr
+\code{as_count()} \tab \linkS4class{CountMatrix} \tab absolute frequency data \cr
+\code{as_composition()} \tab \linkS4class{CompositionMatrix} \tab relative frequency data \cr
+\code{as_incidence()} \tab \linkS4class{IncidenceMatrix} \tab presence/absence data \cr
+\code{as_occurrence()} \tab \linkS4class{OccurrenceMatrix} \tab co-occurrence \cr
+\code{as_stratigraphy()} \tab \linkS4class{StratigraphicMatrix} \tab stratigraphic relationships
+}
 
- \code{as_features} converts an \linkS4class{Matrix} object to a
- collection of features (i.e. a\code{\link{data.frame}} with
- dates and coordinates columns).
+\strong{Note that \code{as_count} rounds numeric values to zero decimal places and
+then coerces to integer as by \code{as.integer()}.}
 
- \code{as_stratigraphy} converts a set of stratigraphic relationships (edges)
- to a stratigraphic (adjacency) matrix. \code{from} can be a
- \code{\link{matrix}}, \code{\link{list}}, or \code{\link{data.frame}}:
- the first column/component is assumed to contain the bottom units and the
- second the top units.
+\code{as_stratigraphy()} converts a set of stratigraphic relationships (edges)
+to a stratigraphic (adjacency) matrix. \code{from} can be a \code{\link{matrix}}, \code{\link{list}},
+or \code{\link{data.frame}}: the first column/component is assumed to contain the
+bottom units and the second the top units (adjacency).
+
+\tabular{lll}{
+\strong{Method} \tab \strong{Target} \tab \strong{Details} \cr
+\code{as_long()} \tab \code{\link{data.frame}} \tab long S3 data frame \cr
+\code{as_features()} \tab \code{\link{data.frame}} \tab wide S3 data frame \cr
+}
+
+\code{as_features()} converts a \verb{*Matrix} object to a collection of features:
+a \code{\link{data.frame}} with all informations as extra columns (result may differ
+according to the class of \code{from}).
 }
 \examples{
 ## Create a count matrix
-A0 <- matrix(data = sample(0:10, 100, TRUE), nrow = 10, ncol = 10)
+A0 <- matrix(data = sample(0:10, 100, TRUE), nrow = 10, ncol = 5)
 
 ## Coerce to absolute frequencies
 A1 <- as_count(A0)
 
 ## Coerce to relative frequencies
-B <- as_abundance(A1)
+B <- as_composition(A1)
 
-## Row sums are internally stored before coercing to a frequency matrix
-## (use totals() to get these values)
+## Row sums are internally stored before coercing to relative frequencies
+## (use get_totals() to retrieve these values)
 ## This allows to restore the source data
 A2 <- as_count(B)
 all(A1 == A2)
@@ -110,21 +134,25 @@ C <- as_incidence(A1)
 ## Coerce to a co-occurrence matrix
 D <- as_occurrence(A1)
 
+## Coerce to an S3 matrix or data.frame
+X <- as.matrix(A1)
+all(A0 == X)
+
+Y <- data.frame(A1)
+head(Y)
+
 ## Collection of features
-set_dates(A1) <- matrix(sample(0:10, 20, TRUE), nrow = 10, ncol = 2)
-set_coordinates(A1) <- matrix(sample(0:10, 30, TRUE), nrow = 10, ncol = 3)
-as_features(A1)
+# set_dates(A1) <- matrix(sample(0:10, 20, TRUE), nrow = 10, ncol = 2)
+# set_coordinates(A1) <- matrix(sample(0:10, 30, TRUE), nrow = 10, ncol = 3)
+# as_features(A1)
 }
 \seealso{
 Other matrix: 
-\code{\link{AbundanceMatrix-class}},
+\code{\link{CompositionMatrix-class}},
 \code{\link{CountMatrix-class}},
+\code{\link{DataMatrix}},
 \code{\link{IncidenceMatrix-class}},
-\code{\link{LogicalMatrix-class}},
-\code{\link{Matrix-class}},
-\code{\link{NumericMatrix-class}},
 \code{\link{OccurrenceMatrix-class}},
-\code{\link{SimilarityMatrix-class}},
 \code{\link{StratigraphicMatrix-class}}
 }
 \author{

@@ -1,128 +1,115 @@
-context("Coerce")
-
 # matrix =======================================================================
-mtx_count <- matrix(sample(1:100, 50, TRUE), ncol = 10)
-mtx_freq <- mtx_count / rowSums(mtx_count)
-# Begin workaround: prevent row sums to zero
-mtx_incid <- matrix(sample(0:1, 50, TRUE), ncol = 10)
-mtx_incid[which(rowSums(mtx_incid) == 0), 1] <- 1
-mtx_incid <- matrix(as.logical(mtx_incid), ncol = 10)
-# End workaround
-mtx_sim <- matrix(1, nrow = 5, ncol = 5)
+test_that("matrix > *Matrix", {
+  cts <- matrix(sample(0:100, 50, TRUE), ncol = 10)
+  freq <- prop.table(cts, 1)
+  incid <- matrix(as.logical(sample(0:1, 50, TRUE)), ncol = 10)
 
-test_that("matrix > CountMatrix", {
-  A <- as_count(mtx_count)
+  # CountMatrix
+  A <- as_count(cts)
   expect_s4_class(A, "CountMatrix")
-  expect_equivalent(as(A, "matrix"), mtx_count)
-})
-test_that("matrix > AbundanceMatrix", {
-  B <- as_abundance(mtx_freq)
-  expect_s4_class(B, "AbundanceMatrix")
-  expect_equivalent(as(B, "matrix"), mtx_freq)
+  expect_equal(A@.Data, cts, ignore_attr = TRUE)
 
-  expect_s4_class(as_abundance(mtx_count), "AbundanceMatrix")
-  expect_s4_class(as_abundance(mtx_incid), "AbundanceMatrix")
-})
-test_that("matrix > IncidenceMatrix", {
-  C <- as_incidence(mtx_incid)
-  expect_s4_class(C, "IncidenceMatrix")
-  expect_equivalent(as(C, "matrix"), mtx_incid)
+  # CompositionMatrix
+  B <- as_composition(cts)
+  expect_s4_class(B, "CompositionMatrix")
+  expect_equal(B@.Data, freq, ignore_attr = TRUE)
 
-  expect_s4_class(as_incidence(mtx_count), "IncidenceMatrix")
-  expect_s4_class(as_incidence(mtx_freq), "IncidenceMatrix")
-})
-test_that("matrix > OccurrenceMatrix", {
-  D <- as_occurrence(mtx_incid)
-  expect_s4_class(D, "OccurrenceMatrix")
-  expect_is(as(D, "matrix"), "matrix")
+  # IncidenceMatrix
+  D <- as_incidence(incid)
+  expect_s4_class(D, "IncidenceMatrix")
+  expect_equal(D@.Data, incid, ignore_attr = TRUE)
 
-  expect_s4_class(as_occurrence(mtx_count), "OccurrenceMatrix")
-  expect_s4_class(as_occurrence(mtx_freq), "OccurrenceMatrix")
-})
-test_that("matrix > SimilarityMatrix", {
-  E <- as_similarity(mtx_sim)
-  expect_s4_class(E, "SimilarityMatrix")
-  expect_is(as(E, "matrix"), "matrix")
-})
+  expect_s4_class(as_incidence(cts), "IncidenceMatrix")
+  expect_s4_class(as_incidence(freq), "IncidenceMatrix")
 
+  # OccurrenceMatrix
+  expect_s4_class(as_occurrence(cts), "OccurrenceMatrix")
+  expect_s4_class(as_occurrence(freq), "OccurrenceMatrix")
+})
 # data.frame ===================================================================
-df_count <- as.data.frame(mtx_count)
-df_freq <- as.data.frame(mtx_freq)
-df_incid <- as.data.frame(mtx_incid)
-df_sim <- as.data.frame(mtx_sim)
+test_that("data.frame <> *Matrix", {
+  cts <- matrix(sample(0:100, 50, TRUE), ncol = 10)
+  freq <- prop.table(cts, 1)
+  incid <- matrix(as.logical(sample(0:1, 50, TRUE)), ncol = 10)
 
-test_that("data.frame <> CountMatrix", {
+  df_count <- as.data.frame(cts)
+  df_freq <- as.data.frame(freq)
+  df_incid <- as.data.frame(incid)
+
+  # CountMatrix
   A <- as_count(df_count)
   expect_s4_class(A, "CountMatrix")
-  expect_equivalent(as(A, "data.frame"), df_count)
-})
-test_that("data.frame <> AbundanceMatrix", {
-  B <- as_abundance(df_freq)
-  expect_s4_class(B, "AbundanceMatrix")
-  expect_equivalent(as(B, "data.frame"), df_freq)
+  expect_equal(as.data.frame(A), df_count, ignore_attr = TRUE)
 
-  expect_s4_class(as_abundance(df_count), "AbundanceMatrix")
-  expect_s4_class(as_abundance(df_incid), "AbundanceMatrix")
-})
-test_that("data.frame <> IncidenceMatrix", {
+  # CompositionMatrix
+  B <- as_composition(df_count)
+  expect_s4_class(B, "CompositionMatrix")
+  expect_equal(as.data.frame(B), df_freq, ignore_attr = TRUE)
+
+  # IncidenceMatrix
   C <- as_incidence(df_incid)
-  expect_s4_class(C, "IncidenceMatrix")
-  expect_equivalent(as(C, "data.frame"), df_incid)
-
+  expect_equal(as.data.frame(C), df_incid, ignore_attr = TRUE)
   expect_s4_class(as_incidence(df_count), "IncidenceMatrix")
   expect_s4_class(as_incidence(df_freq), "IncidenceMatrix")
-})
-test_that("data.frame <> OccurrenceMatrix", {
-  D <- as_occurrence(df_incid)
-  expect_s4_class(D, "OccurrenceMatrix")
-  expect_is(as(D, "data.frame"), "data.frame")
 
+  # OccurrenceMatrix
   expect_s4_class(as_occurrence(df_count), "OccurrenceMatrix")
   expect_s4_class(as_occurrence(df_freq), "OccurrenceMatrix")
+  expect_s4_class(as_occurrence(df_incid), "OccurrenceMatrix")
 })
-test_that("data.frame <> SimilarityMatrix", {
-  E <- as_similarity(df_sim)
-  expect_s4_class(E, "SimilarityMatrix")
-  expect_is(as(E, "data.frame"), "data.frame")
-})
-
 # *Matrix ======================================================================
-count <- as(mtx_count, "CountMatrix")
-freq <- as(mtx_freq, "AbundanceMatrix")
-incid <- as(mtx_incid, "IncidenceMatrix")
-occ <- as(mtx_incid, "OccurrenceMatrix")
+test_that("CountMatrix <> CompositionMatrix", {
+  cts <- matrix(sample(0:100, 50, TRUE), ncol = 10)
 
-test_that("CountMatrix <> AbundanceMatrix", {
-  count1 <- as_count(mtx_count)
-  freq1 <- as_abundance(count1)
-  count2 <- as_count(freq1)
-  expect_identical(count1, count2)
+  counts1 <- as_count(cts)
+  freq1 <- as_composition(counts1)
+  counts2 <- as_count(freq1)
+  expect_equal(counts1, counts2)
+})
+test_that("DataMatrix > long", {
+  cts <- matrix(sample(0:100, 50, TRUE), ncol = 10)
+  counts <- as(cts, "CountMatrix")
 
-  freq1@totals <- numeric(0)
-  expect_error(as_count(freq1), "Cannot calculate absolute frequencies")
+  A <- as_long(counts, factor = TRUE, reverse = FALSE)
+  expect_equal(dim(A), c(50, 5))
+  expect_s3_class(A$row, "factor")
+  expect_s3_class(A$column, "factor")
+
+  B <- as_long(counts, factor = TRUE, reverse = TRUE)
+  expect_equal(rev(levels(A$row)), levels(B$row))
 })
-test_that("*Matrix > CountMatrix", {
-  expect_s4_class(as_count(count), "CountMatrix")
-  # expect_error(as_count(occ))
+test_that("DataMatrix > features", {
+  cts <- matrix(sample(0:100, 50, TRUE), ncol = 10)
+  freq <- as_composition(cts)
+  feat <- as_features(freq)
+
+  expect_equal(dim(feat), c(5, 12))
 })
-test_that("*Matrix > AbundanceMatrix", {
-  expect_s4_class(as_abundance(count), "AbundanceMatrix")
-  expect_s4_class(as_abundance(freq), "AbundanceMatrix")
-  expect_s4_class(as_abundance(incid), "AbundanceMatrix")
-  # expect_error(as_abundance(occ))
-})
-test_that("*Matrix > IncidenceMatrix", {
-  expect_s4_class(as_incidence(count), "IncidenceMatrix")
-  expect_s4_class(as_incidence(freq), "IncidenceMatrix")
-  expect_s4_class(as_incidence(incid), "IncidenceMatrix")
-  # expect_error(as_incidence(occ))
-})
-test_that("*Matrix > OccurrenceMatrix", {
-  expect_s4_class(as_occurrence(count), "OccurrenceMatrix")
-  expect_s4_class(as_occurrence(freq), "OccurrenceMatrix")
-  expect_s4_class(as_occurrence(incid), "OccurrenceMatrix")
-})
-test_that("*Matrix > features", {
-  expect_message(as_features(count), "No coordinates were set, NA generated.")
-  expect_message(as_features(count), "No dates were set, NA generated.")
+# Autodetect ===================================================================
+test_that("Autodetect", {
+  spl <- LETTERS[1:5]
+  grp <- c("a", "a", "b", "b", "c")
+
+  cts <- matrix(sample(0:100, 50, TRUE), ncol = 10)
+  cts <- as.data.frame(cts)
+  cts$sample <- spl
+  cts$group <- grp
+
+  options(arkhe.autodetect = TRUE)
+  counts <- as_count(cts)
+  expect_equal(get_samples(counts), spl)
+  expect_equal(get_groups(counts), grp)
+
+  freq <- as_composition(cts)
+  expect_equal(get_samples(freq), spl)
+  expect_equal(get_groups(freq), grp)
+
+  incid <- as_incidence(cts)
+  expect_equal(get_samples(incid), spl)
+  expect_equal(get_groups(incid), grp)
+
+  options(arkhe.autodetect = FALSE)
+  counts <- as_count(cts)
+  expect_equal(get_samples(counts), rownames(counts))
+  expect_equal(get_groups(counts), character(0))
 })

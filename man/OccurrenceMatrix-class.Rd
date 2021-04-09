@@ -10,106 +10,49 @@ An S4 class to represent a co-occurrence matrix.
 }
 \details{
 A co-occurrence matrix is a symmetric matrix with zeros on its main
- diagonal, which works out how many times (expressed in percent) each pairs
- of taxa/types occur together in at least one sample.
+diagonal, which works out how many times each pairs of taxa/types occur
+together in at least one sample.
 }
-\section{Matrix ID}{
+\section{Slots}{
 
- When a matrix is first created, an identifier is generated (UUID v4).
- This ID is preserved when coercing to another class. Thus, the object ID is
- unique within the same class, but two objects of different classes can have
- the same ID. This makes it possible to identify objects representing the
- same initial data and associate them with the results of specific
- computations.
-}
-
-\section{Get and set}{
-
- In the code snippets below, \code{x} is a \code{*Matrix} object.
- \describe{
-  \item{\code{get_id(x)}}{Get the ID of \code{x}.}
-  \item{\code{get_dates(x)} and \code{set_dates(x) <- value}}{Get or set
-  the dates of \code{x}.}
-  \item{\code{get_coordinates(x)} and \code{set_coordinates(x) <- value}}{Get
-  or set the geographical coordinates of \code{x}.}
- }
-}
-
-\section{Access}{
-
- In the code snippets below, \code{x} is a \code{*Matrix} object.
- \describe{
-  \item{\code{dim(x)}}{Returns the dimension of \code{x}.}
-  \item{\code{nrow(x)}}{Returns the number of rows present in \code{x}.}
-  \item{\code{ncol(x)}}{Returns the number of columns present in \code{x}.}
-  \item{\code{dimnames(x)}, \code{dimnames(x) <- value}}{Retrieves or sets
-  the row dimnames of \code{x} according to \code{value}.}
-  \item{\code{rownames(x)}, \code{rownames(x) <- value}}{Retrieves or sets
-  the row names of \code{x} according to \code{value}.}
-  \item{\code{colnames(x)}, \code{colnames(x) <- value}}{Retrieves or sets
-  the column names of \code{x} according to \code{value}.}
- }
-}
-
-\section{Subset}{
-
- In the code snippets below, \code{x} is a \code{*Matrix} object.
- \describe{
-  \item{\code{x[i, j]}}{Extracts elements selected by subscripts \code{i}
-  and \code{j}. Indices are \code{\link{numeric}}, \code{\link{integer}} or
-  \code{\link{character}} vectors or empty (missing) or \code{NULL}.
-  Numeric values are coerced to \code{\link{integer}} as by
-  \code{\link{as.integer}} (and hence truncated towards zero).
-  Character vectors will be matched to the name of the elements.
-  An empty index (a comma separated blank) indicates that all
-  entries in that dimension are selected.
-  Returns an object of the same class as \code{x}.}
-  \item{\code{x[[i]]}}{Extracts a single element selected by subscript
-  \code{i}.}
- }
-}
+\describe{
+\item{\code{total}}{An \code{\link{integer}} giving the total number of observations.}
+}}
 
 \examples{
+## Create an incidence (presence/absence) matrix
+## Data will be coerced with as.logical()
+A <- IncidenceMatrix(data = sample(0:1, 100, TRUE, c(1, 1/3)), nrow = 20)
 ## Create a count data matrix
-A1 <- CountMatrix(data = sample(0:10, 100, TRUE), nrow = 10, ncol = 10)
+B <- CountMatrix(data = sample(0:10, 100, TRUE), nrow = 20)
 
 ## Access
-get_id(A1)
-dim(A1) # Get the matrix dimensions
-colnames(A1) <- letters[11:20] # Set the column names
-colnames(A1) # Get the column names
-rownames(A1) <- LETTERS[1:10] # Set the row names
-rownames(A1) # Get the rownames
+dim(B) # Get the matrix dimensions
+row(B) # Get the row indexes
+col(B, as.factor = TRUE) # Get the column indexes
+nrow(B) # Get the number of rows
+ncol(B) # Get the number of columns
+dimnames(B) # Get the dimension names
+rownames(B) <- LETTERS[1:20] # Set the row names
+rownames(B) # Get the rownames
+colnames(B) <- letters[21:25] # Set the column names
+colnames(B) # Get the column names
 
 ## Subset
-A1[[1]] # Get the first value
-A1[, ] # Get all values
-A1[1, ] # Get the first row
-A1[c("A", "B", "C"), ] # Get the first three rows
-A1[c("A", "B", "C"), 1] # Get the first three rows of the first column
-A1[, 1, drop = FALSE] # Get the first column
-
-## Coerce counts to relative frequencies
-B <- as_abundance(A1)
-## Row sums are internally stored before coercing to a frequency matrix
-get_totals(B) # Get row sums
-## This allows to restore the source data
-A2 <- as_count(B)
-all(A1 == A2)
-## Coerce to a co-occurrence matrix
-B <- as_occurrence(A1)
+B[[1, 1]] # Get the first value
+B[1] # Get the first value
+B[, ] # Get all values
+B[1, , drop = FALSE] # Get the first row
+B[, 1:3] # Get the first three column
 }
 \seealso{
-\linkS4class{NumericMatrix}
+\code{\link[=as_occurrence]{as_occurrence()}}
 
 Other matrix: 
-\code{\link{AbundanceMatrix-class}},
+\code{\link{CompositionMatrix-class}},
 \code{\link{CountMatrix-class}},
+\code{\link{DataMatrix}},
 \code{\link{IncidenceMatrix-class}},
-\code{\link{LogicalMatrix-class}},
-\code{\link{Matrix-class}},
-\code{\link{NumericMatrix-class}},
-\code{\link{SimilarityMatrix-class}},
 \code{\link{StratigraphicMatrix-class}},
 \code{\link{coerce}()}
 }

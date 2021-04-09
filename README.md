@@ -1,15 +1,13 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# arkhe
+# arkhe <img width=120px src="man/figures/logo.png" align="right" />
 
 <!-- badges: start -->
 
-[![Appveyor build
-status](https://ci.appveyor.com/api/projects/status/7xt157mqcny0pht1?svg=true)](https://ci.appveyor.com/project/nfrerebeau/arkhe)
-[![Travis build
-Status](https://travis-ci.org/nfrerebeau/arkhe.svg?branch=master)](https://travis-ci.org/nfrerebeau/arkhe)
-[![codecov](https://codecov.io/gh/nfrerebeau/arkhe/branch/master/graph/badge.svg)](https://codecov.io/gh/nfrerebeau/arkhe)
+[![R build
+status](https://github.com/tesselle/arkhe/workflows/R-CMD-check/badge.svg)](https://github.com/tesselle/arkhe/actions)
+[![codecov](https://codecov.io/gh/tesselle/arkhe/branch/master/graph/badge.svg)](https://codecov.io/gh/tesselle/arkhe)
 
 [![CRAN
 Version](http://www.r-pkg.org/badges/version/arkhe)](https://cran.r-project.org/package=arkhe)
@@ -21,8 +19,6 @@ Downloads](http://cranlogs.r-pkg.org/badges/arkhe)](https://cran.r-project.org/p
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![Lifecycle:
-maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3526659.svg)](https://doi.org/10.5281/zenodo.3526659)
 <!-- badges: end -->
@@ -30,13 +26,13 @@ maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www
 ## Overview
 
 A collection of classes that represent archaeological data. This package
-provides a set of S4 classes that extend the basic matrix data type
-(absolute/relative frequency, presence/absence data, co-occurrence
-matrix, etc.) upon which package developers can build subclasses. It
-also provides a set of generic methods (mutators and coercion
-mechanisms) and functions (e.g. predicates). In addition, a few classes
-of general interest (e.g. that represent stratigraphic relationships)
-are implemented.
+provides a set of S4 classes that represent different special types of
+matrix (absolute/relative frequency, presence/absence data,
+co-occurrence matrix, etc.) upon which package developers can build
+subclasses. It also provides a set of generic methods (mutators and
+coercion mechanisms) and functions (e.g. predicates). In addition, a few
+classes of general interest (e.g. that represent stratigraphic
+relationships) are implemented.
 
 ## Installation
 
@@ -47,51 +43,47 @@ You can install the released version of **arkhe** from
 install.packages("arkhe")
 ```
 
-Or install the development version from GitHub with:
+And the development version from [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-remotes::install_github("nfrerebeau/arkhe")
+# install.packages("remotes")
+remotes::install_github("tesselle/arkhe")
 ```
 
 ## Usage
 
 ``` r
-# Load the package
+## Load the package
 library(arkhe)
 ```
 
-``` r
-# See the vignette
-utils::vignette("arkhe", package = "arkhe")
-```
+**arkhe** provides a set of S4 classes that represent different special
+types of matrix.
 
-**arkhe** provides a set of S4 classes that extend the basic `matrix`
-data type. These new classes represent different special types of
-matrix.
-
-  - Numeric matrix:
-      - `CountMatrix` represents absolute frequency data,
-      - `AbundanceMatrix` represents relative frequency data,
-      - `OccurrenceMatrix` represents a co-occurrence matrix,
-      - `SimilarityMatrix` represents a (dis)similarity matrix,
-  - Logical matrix:
-      - `IncidenceMatrix` represents presence/absence data,
-      - `StratigraphicMatrix` represents stratigraphic relationships.
+-   Integer matrix:
+    -   `CountMatrix` represents absolute frequency data,
+    -   `OccurrenceMatrix` represents a co-occurrence matrix,
+-   Numeric matrix:
+    -   `CompositionMatrix` represents relative frequency
+        (compositional) data,
+-   Logical matrix:
+    -   `IncidenceMatrix` represents presence/absence data,
+    -   `StratigraphicMatrix` represents stratigraphic relationships.
 
 *It assumes that you keep your data tidy*: each variable (type/taxa)
 must be saved in its own column and each observation (assemblage/sample)
 must be saved in its own row.
 
-These new classes are of simple use, on the same way as the base
+These new classes are of simple use as they inherit from the base
 `matrix`:
 
 ``` r
-# Define a count data matrix
+## Define a count data matrix
+## (data will be rounded to zero decimal places, then coerced with as.integer)
 quanti <- CountMatrix(data = sample(0:10, 100, TRUE), nrow = 10, ncol = 10)
 
-# Define a logical matrix
-# Data will be coerced with as.logical()
+## Define a logical matrix
+## (data will be coerced with as.logical)
 quali <- IncidenceMatrix(data = sample(0:1, 100, TRUE), nrow = 10, ncol = 10)
 ```
 
@@ -100,13 +92,13 @@ type conversions:
 
 ``` r
 ## Create a count matrix
-A0 <- matrix(data = sample(0:10, 100, TRUE), nrow = 10, ncol = 10)
+X <- matrix(data = sample(0:10, 75, TRUE), nrow = 15, ncol = 5)
 
 ## Coerce to absolute frequencies
-A1 <- as_count(A0)
+A1 <- as_count(X)
 
 ## Coerce to relative frequencies
-B <- as_abundance(A1)
+B <- as_composition(A1)
 
 ## Row sums are internally stored before coercing to a frequency matrix
 ## (use get_totals() to get these values)
@@ -116,53 +108,42 @@ all(A1 == A2)
 #> [1] TRUE
 
 ## Coerce to presence/absence
-C <- as_incidence(A1)
+D <- as_incidence(A1)
 
 ## Coerce to a co-occurrence matrix
-D <- as_occurrence(A1)
+E <- as_occurrence(A1)
 ```
 
-Represent stratigraphic relationships:
+The `CountMatrix`, `CompositionMatrix` and `IncidenceMatrix` classes
+have two special slots:
+
+-   `samples` for replicated measurements/observation,
+-   `groups` to group data by site/area.
+
+When coercing a `data.frame` to a `*Matrix` object, an attempt is made
+to automatically assign the corresponding values. This behavior can be
+disabled by setting `options(arkhe.autodetect = FALSE)`.
 
 ``` r
-# Principles of Archaeological Stratigraphy, fig. 12
-harris <- read.table(
-  header = TRUE,
-  text = "lower upper
-          2     1
-          3     1
-          4     1
-          5     2
-          5     3
-          5     4
-          6     5
-          7     1
-          7     6
-          8     1
-          8     6
-          9     7
-          9     8"
-)
+Y <- as.data.frame(X)
+Y$samples <- rep(c("a", "b", "c", "d", "e"), each = 3)
+Y$groups <- rep(c("A", "B", "C"), each = 5)
 
-as_stratigraphy(harris)
-#> <StratigraphicMatrix: aca09a25-5637-4d61-a55b-13cfe70e0401>
-#>  9 x 9 stratigraphic matrix:
-#>      upper
-#> lower     1     2     3     4     5     6     7     8     9
-#>     1 FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-#>     2  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-#>     3  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-#>     4  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-#>     5 FALSE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE
-#>     6 FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE
-#>     7  TRUE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE
-#>     8  TRUE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE
-#>     9 FALSE FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE FALSE
+## Coerce to a count matrix
+Z <- as_count(Y)
+
+## Get groups
+get_samples(Z)
+#>  [1] "a" "a" "a" "b" "b" "b" "c" "c" "c" "d" "d" "d" "e" "e" "e"
+
+## Get groups
+get_groups(Z)
+#>  [1] "A" "A" "A" "A" "A" "B" "B" "B" "B" "B" "C" "C" "C" "C" "C"
 ```
 
 ## Contributing
 
 Please note that the **arkhe** project is released with a [Contributor
 Code of
-Conduct](https://github.com/nfrerebeau/arkhe/blob/master/.github/CODE_OF_CONDUCT.md).
+Conduct](https://github.com/tesselle/arkhe/blob/master/.github/CODE_OF_CONDUCT.md).
 By contributing to this project, you agree to abide by its terms.

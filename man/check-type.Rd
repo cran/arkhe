@@ -8,13 +8,17 @@
 \usage{
 check_type(x, expected)
 
-check_scalar(x, expected)
+check_scalar(x, expected, strict = TRUE)
 }
 \arguments{
 \item{x}{An object to be checked.}
 
 \item{expected}{A \code{\link{character}} string specifying the expected
-type.}
+type. It must be one of "\code{list}", "\code{atomic}", "\code{vector}", "\code{numeric}",
+"\code{integer}", "\code{double}", "\code{character}" or "\code{logical}".}
+
+\item{strict}{A \code{\link{logical}} scalar: should length-zero object be
+tested?}
 }
 \value{
 Throw an error, if any.
