@@ -23,14 +23,15 @@ A collection of classes that represent
 \tabular{ll}{
 \strong{Package:} \tab arkhe \cr
 \strong{Type:} \tab Package \cr
-\strong{Version:} \tab 0.3.0 \cr
+\strong{Version:} \tab 0.3.1 \cr
 \strong{License:} \tab GPL-3 \cr
-\strong{DOI:} \tab \doi{10.5281/zenodo.3526659} \cr
 }
+
+\doi{10.5281/zenodo.3526659}
 }
 \section{Package options}{
 
-\code{arkhe} uses the following \code{\link[=options]{options()}} to configure behaviour:
+\code{arkhe} uses the following \code{\link[=options]{options()}} to configure behavior:
 \itemize{
 \item \code{arkhe.autodetect}: a \code{\link{logical}} scalar.
 \item \code{arkhe.verbose}: a \code{\link{logical}} scalar. Should \R report extra information

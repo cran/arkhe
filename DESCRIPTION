@@ -1,6 +1,6 @@
 Package: arkhe
 Title: Representation of Archaeological Data
-Version: 0.3.0
+Version: 0.3.1
 Authors@R: 
     c(person(given = "Nicolas",
              family = "Frerebeau",
@@ -38,8 +38,8 @@ Collate: 'AllClasses.R' 'AllGenerics.R' 'arkhe-package.R'
         'mutators.R' 'show.R' 'subset.R' 'utilities.R' 'validate.R'
         'zzz.R'
 NeedsCompilation: no
-Packaged: 2021-04-09 14:01:09 UTC; nicolas
+Packaged: 2021-05-14 09:45:30 UTC; nicolas
 Author: Nicolas Frerebeau [aut, cre] (<https://orcid.org/0000-0001-5759-4944>),
   Brice Lebrun [ctb] (<https://orcid.org/0000-0001-7503-8685>)
 Repository: CRAN
-Date/Publication: 2021-04-09 14:20:02 UTC
+Date/Publication: 2021-05-14 10:12:12 UTC
