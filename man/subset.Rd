@@ -4,14 +4,11 @@
 \name{subset}
 \alias{subset}
 \alias{[,AbundanceMatrix-method}
-\alias{[,CompositionMatrix-method}
 \alias{[<-,AbundanceMatrix-method}
 \alias{[[<-,AbundanceMatrix-method}
 \title{Extract or Replace Parts of an Object}
 \usage{
 \S4method{[}{AbundanceMatrix}(x, i, j, ..., drop = TRUE)
-
-\S4method{[}{CompositionMatrix}(x, i, j, ..., drop = TRUE)
 
 \S4method{[}{AbundanceMatrix}(x, i, j, ...) <- value
 
@@ -69,10 +66,11 @@ B[1, , drop = FALSE] # Get the first row
 B[, 1:3] # Get the first three column
 }
 \seealso{
-Other mutator: 
-\code{\link{mutator}}
+Other mutators: 
+\code{\link{mutators}},
+\code{\link{summary}()}
 }
 \author{
 N. Frerebeau
 }
-\concept{mutator}
+\concept{mutators}

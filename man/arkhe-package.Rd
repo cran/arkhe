@@ -23,26 +23,27 @@ A collection of classes that represent
 \tabular{ll}{
 \strong{Package:} \tab arkhe \cr
 \strong{Type:} \tab Package \cr
-\strong{Version:} \tab 0.3.1 \cr
+\strong{Version:} \tab 0.4.0 \cr
 \strong{License:} \tab GPL-3 \cr
+\strong{Zenodo:} \tab \doi{10.5281/zenodo.3526659} \cr
 }
-
-\doi{10.5281/zenodo.3526659}
 }
 \section{Package options}{
 
 \code{arkhe} uses the following \code{\link[=options]{options()}} to configure behavior:
 \itemize{
-\item \code{arkhe.autodetect}: a \code{\link{logical}} scalar.
+\item \code{arkhe.autodetect}: a \code{\link{logical}} scalar. Try to automatically assign
+values to the corresponding slot of a \verb{*Matrix} object when coercing a
+\code{data.frame}? Defaults to \code{TRUE}.
 \item \code{arkhe.verbose}: a \code{\link{logical}} scalar. Should \R report extra information
-on progress?
+on progress? Defaults to \code{TRUE}.
 }
 }
 
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://arkhe.tesselle.org}
+  \item \url{https://packages.tesselle.org/arkhe/}
   \item \url{https://github.com/tesselle/arkhe}
   \item Report bugs at \url{https://github.com/tesselle/arkhe/issues}
 }

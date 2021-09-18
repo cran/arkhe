@@ -5,9 +5,9 @@ NULL
 # Clean ========================================================================
 #' Data Replacement
 #'
-#' Removes empty row/column or row/column with missing values or zeros.
+#' Replaces [`missing`][NA] or [`infinite`][is.finite()] values or zeros.
 #' @param x A [`matrix`], a [`data.frame`] or a `*Matrix` object.
-#' @param value A possible value to replace missing values of `x`.
+#' @param value A possible value to replace missing or infinite values of `x`.
 #' @param ... Currently not used.
 #' @example inst/examples/ex-clean.R
 #' @author N. Frerebeau
@@ -24,15 +24,28 @@ setGeneric(
   def = function(x, ...) standardGeneric("replace_NA")
 )
 
+#' @rdname replace
+#' @aliases replace_Inf-method
+setGeneric(
+  name = "replace_Inf",
+  def = function(x, ...) standardGeneric("replace_Inf")
+)
+
+#' @rdname replace
+#' @aliases replace_zero-method
+setGeneric(
+  name = "replace_zero",
+  def = function(x, ...) standardGeneric("replace_zero")
+)
+
 #' Data Cleaning
 #'
-#' Removes empty row/column or row/column with missing values or zeros.
+#' Removes empty row/column or row/column with [`missing`][NA]/
+#' [`infinite`][is.finite()] values or zeros.
 #' @param x A [`matrix`], a [`data.frame`] or a `*Matrix` object.
 #' @param margin An [`integer`] giving the subscript which the
 #'  cleaning will be applied over (`1` indicates rows, `2` indicates
 #'  columns).
-#' @param finite A [`logical`] scalar: should non-[`finite`] values also be
-#'  removed?
 #' @param ... Currently not used.
 #' @example inst/examples/ex-clean.R
 #' @author N. Frerebeau
@@ -47,6 +60,13 @@ NULL
 setGeneric(
   name = "remove_NA",
   def = function(x, ...) standardGeneric("remove_NA")
+)
+
+#' @rdname remove
+#' @aliases remove_Inf-method
+setGeneric(
+  name = "remove_Inf",
+  def = function(x, ...) standardGeneric("remove_Inf")
 )
 
 #' @rdname remove
@@ -66,6 +86,7 @@ setGeneric(
 # Coerce =======================================================================
 #' Coerce
 #'
+#' Coerces an object to a `*Matrix` object.
 #' @param from An object to be coerced.
 #' @param factor A [`logical`] scalar: should character string be
 #'  coerced to [`factor`]? Default to `FALSE`, if `TRUE` the original ordering is
@@ -85,8 +106,8 @@ setGeneric(
 #'   `as_stratigraphy()` \tab [StratigraphicMatrix-class] \tab stratigraphic relationships
 #'  }
 #'
-#'  **Note that `as_count` rounds numeric values to zero decimal places and
-#'  then coerces to integer as by `as.integer()`.**
+#'  *Note that `as_count()` rounds numeric values to zero decimal places and
+#'  then coerces to integer as by `as.integer()`.*
 #'
 #'  `as_stratigraphy()` converts a set of stratigraphic relationships (edges)
 #'  to a stratigraphic (adjacency) matrix. `from` can be a [`matrix`], [`list`],
@@ -102,11 +123,13 @@ setGeneric(
 #'  `as_features()` converts a `*Matrix` object to a collection of features:
 #'  a [`data.frame`] with all informations as extra columns (result may differ
 #'  according to the class of `from`).
+#' @inheritSection AbundanceMatrix-class Abundance Matrix
+#' @inheritSection AbundanceMatrix-class Chronology
 #' @return A coerced object.
 #' @example inst/examples/ex-coerce.R
 #' @author N. Frerebeau
 #' @docType methods
-#' @family matrix
+#' @family classes
 #' @name coerce
 #' @rdname coerce
 NULL
@@ -132,14 +155,6 @@ setGeneric(
 setGeneric(
   name = "as_composition",
   def = function(from) standardGeneric("as_composition"),
-  valueClass = "CompositionMatrix"
-)
-
-#' @rdname coerce
-#' @aliases as_abundance-method
-setGeneric(
-  name = "as_abundance",
-  def = function(from) standardGeneric("as_abundance"),
   valueClass = "CompositionMatrix"
 )
 
@@ -179,63 +194,151 @@ setGeneric(
 #' Get or Set Parts of an Object
 #'
 #' Getters and setters to retrieve or set parts of an object.
-#' @param x An object from which to get or set element(s) (typically a
-#'  `*Matrix` object).
+#' @param x An object from which to get or set element(s) (typically an
+#'  [`AbundanceMatrix-class`] object).
 #' @param value A possible value for the element(s) of `x`.
+#' @details
+#'  \describe{
+#'   \item{`get_samples(x)` and `get_samples(x) <- value`}{Get or set
+#'   the sample names of `x`.}
+#'   \item{`get_groups(x)` and `set_groups(x) <- value`}{Get or set
+#'   the groups of `x`.}
+#'   \item{`get_dates(x)` and `set_dates(x) <- value`}{Get or set the dates of
+#'   `x`.}
+#'   \item{`get_terminus(x)` and `set_terminus(x) <- value`}{Get or set
+#'   the chronology of `x`. `value` must be a [`list`] with components `tpq`
+#'   (TPQ - *terminus post quem*) and `taq` (TAQ - *terminus ante quem*).}
+#'   \item{`get_tpq(x)` and `set_tpq(x) <- value`,
+#'   `get_taq(x)` and `set_taq(x) <- value`}{Get or set the TPQ/TAQ of `x`.}
+#'  }
+#' @inheritSection AbundanceMatrix-class Chronology
 #' @return
-#'  An object of the same sort as `x` with the new values assigned.
-#' @example inst/examples/ex-matrix.R
+#'  * `set_*()` returns an object of the same sort as `x` with the new values
+#'    assigned.
+#'  * `get_*()` returns the part of `x`.
+#'  * `has_*()` returns a [`logical`] scalar.
+#' @example inst/examples/ex-mutators.R
 #' @author N. Frerebeau
 #' @docType methods
-#' @family mutator
-#' @name mutator
-#' @rdname mutator
+#' @family mutators
+#' @name mutators
+#' @rdname mutators
 #' @aliases get set
 NULL
 
-#' @rdname mutator
+#' @rdname mutators
 #' @aliases has_groups-method
 setGeneric(
   name = "has_groups",
   def = function(x) standardGeneric("has_groups")
 )
 
-#' @rdname mutator
+#' @rdname mutators
 #' @aliases get_groups-method
 setGeneric(
   name = "get_groups",
   def = function(x) standardGeneric("get_groups")
 )
 
-#' @rdname mutator
+#' @rdname mutators
 #' @aliases set_groups-method
 setGeneric(
   name = "set_groups<-",
   def = function(x, value) standardGeneric("set_groups<-")
 )
 
-#' @rdname mutator
+#' @rdname mutators
 #' @aliases get_samples-method
 setGeneric(
   name = "get_samples",
   def = function(x) standardGeneric("get_samples")
 )
 
-#' @rdname mutator
+#' @rdname mutators
 #' @aliases set_samples-method
 setGeneric(
   name = "set_samples<-",
   def = function(x, value) standardGeneric("set_samples<-")
 )
 
-#' @rdname mutator
+#' @rdname mutators
+#' @aliases has_dates-method
+setGeneric(
+  name = "has_dates",
+  def = function(x) standardGeneric("has_dates")
+)
+
+#' @rdname mutators
+#' @aliases get_dates-method
+setGeneric(
+  name = "get_dates",
+  def = function(x) standardGeneric("get_dates")
+)
+
+#' @rdname mutators
+#' @aliases set_dates-method
+setGeneric(
+  name = "set_dates<-",
+  def = function(x, value) standardGeneric("set_dates<-")
+)
+
+#' @rdname mutators
+#' @aliases has_terminus-method
+setGeneric(
+  name = "has_terminus",
+  def = function(x) standardGeneric("has_terminus")
+)
+
+#' @rdname mutators
+#' @aliases get_terminus-method
+setGeneric(
+  name = "get_terminus",
+  def = function(x) standardGeneric("get_terminus")
+)
+
+#' @rdname mutators
+#' @aliases set_terminus-method
+setGeneric(
+  name = "set_terminus<-",
+  def = function(x, value) standardGeneric("set_terminus<-")
+)
+
+#' @rdname mutators
+#' @aliases get_tpq-method
+setGeneric(
+  name = "get_tpq",
+  def = function(x) standardGeneric("get_tpq")
+)
+
+#' @rdname mutators
+#' @aliases set_tpq-method
+setGeneric(
+  name = "set_tpq<-",
+  def = function(x, value) standardGeneric("set_tpq<-")
+)
+
+#' @rdname mutators
+#' @aliases get_taq-method
+setGeneric(
+  name = "get_taq",
+  def = function(x) standardGeneric("get_taq")
+)
+
+#' @rdname mutators
+#' @aliases set_taq-method
+setGeneric(
+  name = "set_taq<-",
+  def = function(x, value) standardGeneric("set_taq<-")
+)
+
+#' @rdname mutators
 #' @aliases get_totals-method
 setGeneric(
   name = "get_totals",
   def = function(x) standardGeneric("get_totals")
 )
 
-#' @rdname mutator
+#' @rdname mutators
 #' @aliases set_totals-method
 setGeneric(
   name = "set_totals<-",
@@ -264,7 +367,23 @@ setGeneric(
 #' @example inst/examples/ex-matrix.R
 #' @author N. Frerebeau
 #' @docType methods
-#' @family mutator
+#' @family mutators
 #' @name subset
 #' @rdname subset
+NULL
+
+# Summary ======================================================================
+#' Object Summaries
+#'
+#' Produces result summaries.
+#' @param object An [`AbundanceMatrix-class`] object.
+#' @param ... Currently not used.
+#' @return
+#'  An `AbundanceSummary` object.
+#' @example inst/examples/ex-mutators.R
+#' @author N. Frerebeau
+#' @docType methods
+#' @family mutators
+#' @name summary
+#' @rdname summary
 NULL

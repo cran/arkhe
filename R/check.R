@@ -2,6 +2,22 @@
 #' @include predicates.R
 NULL
 
+#' Validate a Condition
+#'
+#' @param expr An object to be evaluated.
+#' @return
+#'  Returns `NULL` on success, otherwise returns the error as a string.
+#' @author N. Frerebeau
+#' @family validation methods
+#' @name validate
+#' @rdname validate
+#' @export
+validate <- function(expr) {
+  cnd <- catch_message(eval(expr))
+  if (has_length(cnd)) return(cnd)
+  NULL
+}
+
 # Types ========================================================================
 #' Check Data Types
 #'
@@ -9,18 +25,17 @@ NULL
 #' @param expected A [`character`] string specifying the expected
 #'  type. It must be one of "`list`", "`atomic`", "`vector`", "`numeric`",
 #'  "`integer`", "`double`", "`character`" or "`logical`".
-#' @param strict A [`logical`] scalar: should length-zero object be
-#'  tested?
-#' @return Throw an error, if any.
+#' @return
+#'  Throws an error, if any, and returns `x` invisibly otherwise.
 #' @author N. Frerebeau
-#' @family check
+#' @family validation methods
 #' @name check-type
 #' @rdname check-type
-#' @keywords internal
 NULL
 
+#' @export
 #' @rdname check-type
-check_type <- function(x, expected) {
+assert_type <- function(x, expected) {
   arg <- deparse(substitute(x))
   predicate <- switch(
     expected,
@@ -41,8 +56,9 @@ check_type <- function(x, expected) {
   invisible(x)
 }
 
+#' @export
 #' @rdname check-type
-check_scalar <- function(x, expected, strict = TRUE) {
+assert_scalar <- function(x, expected) {
   arg <- deparse(substitute(x))
   predicate <- switch(
     expected,
@@ -56,7 +72,7 @@ check_scalar <- function(x, expected, strict = TRUE) {
     logical = is_scalar_logical,
     stop("Can't find a predicate for this scalar: ", expected, call. = FALSE)
   )
-  if (!(!strict && length(x) == 0) && !predicate(x)) {
+  if (!predicate(x)) {
     msg <- sprintf("%s must be a scalar (%s).", sQuote(arg), expected)
     throw_error("error_bad_scalar", msg)
   }
@@ -68,109 +84,123 @@ check_scalar <- function(x, expected, strict = TRUE) {
 #'
 #' @param x An object to be checked.
 #' @param expected An appropriate expected value.
-#' @return Throw an error, if any.
+#' @param empty A [`logical`] scalar: should empty objects be ignored?
+#' @return
+#'  Throws an error, if any, and returns `x` invisibly otherwise.
 #' @author N. Frerebeau
-#' @family check
+#' @family validation methods
 #' @name check-attribute
 #' @rdname check-attribute
-#' @keywords internal
 NULL
 
+#' @export
 #' @rdname check-attribute
-check_length <- function(x, expected, strict = TRUE) {
+assert_empty <- function(x) {
   arg <- deparse(substitute(x))
-  n <- length(x)
-  if (!(!strict && length(x) == 0) && n != expected) {
-    msg <- sprintf("%s must be of length %d; not %s.", sQuote(arg), expected, n)
-    throw_error("error_bad_dimension", msg)
+  if (!is_empty(x)) {
+    msg <- sprintf("%s must be empty.", sQuote(arg))
+    throw_error("error_bad_dimensions", msg)
   }
   invisible(x)
 }
 
+#' @export
 #' @rdname check-attribute
-check_lengths <- function(x, expected) {
+assert_filled <- function(x) {
+  arg <- deparse(substitute(x))
+  if (is_empty(x)) {
+    msg <- sprintf("%s must not be empty.", sQuote(arg))
+    throw_error("error_bad_dimensions", msg)
+  }
+  invisible(x)
+}
+
+#' @export
+#' @rdname check-attribute
+assert_length <- function(x, expected, empty = FALSE) {
+  arg <- deparse(substitute(x))
+  if (!(empty & is_empty(x)) && !has_length(x, n = expected)) {
+    msg <- sprintf("%s must be of length %d; not %s.", sQuote(arg),
+                   expected, length(x))
+    throw_error("error_bad_length", msg)
+  }
+  invisible(x)
+}
+
+#' @export
+#' @rdname check-attribute
+assert_lengths <- function(x, expected) {
   arg <- deparse(substitute(x))
   n <- lengths(x)
   if (any(n != expected)) {
     msg <- sprintf("Elements of %s must be of lengths %s; not %s.", sQuote(arg),
                    paste0(expected, collapse = ", "),
                    paste0(n, collapse = ", "))
-    throw_error("error_bad_dimension", msg)
+    throw_error("error_bad_length", msg)
   }
   invisible(x)
 }
 
+#' @export
 #' @rdname check-attribute
-check_dimension <- function(x, expected) {
+assert_dimensions <- function(x, expected) {
   arg <- deparse(substitute(x))
   n <- dim(x)
   if (any(n != expected)) {
     msg <- sprintf("%s must be of dimension %s; not %s.", sQuote(arg),
                    paste0(expected, collapse = " x "),
                    paste0(n, collapse = " x "))
-    throw_error("error_bad_dimension", msg)
+    throw_error("error_bad_dimensions", msg)
   }
   invisible(x)
 }
 
+#' @export
 #' @rdname check-attribute
-check_names <- function(x, expected) {
+assert_names <- function(x, expected) {
   arg <- deparse(substitute(x))
-  k <- names(x)
-  if ((is.null(k) & !is.null(expected)) || any(k != expected)) {
-    msg <- sprintf("%s must have the following names: %s.",
-                   sQuote(arg), paste0(expected, collapse = ", "))
+  if (!has_names(x, names = expected)) {
+    if (is.null(expected)) {
+      msg <- sprintf("%s must have names.", sQuote(arg))
+    } else {
+      msg <- sprintf("%s must have the following names: %s.",
+                     sQuote(arg), paste0(expected, collapse = ", "))
+    }
     throw_error("error_bad_names", msg)
   }
   invisible(x)
 }
 
+#' @export
 #' @rdname check-attribute
-check_dimnames <- function(x, expected, margin = c(1, 2)) {
+assert_dimnames <- function(x, expected) {
   arg <- deparse(substitute(x))
-  k <- dimnames(x)
-  for (i in margin) {
-    x <- k[[i]]
-    y <- expected[[i]]
-    if ((is.null(x) & !is.null(y)) || any(x != y)) {
-      msg <- sprintf("%s must have the following %s names: %s.", sQuote(arg),
-                     ifelse(i == 1, "row", "column"),
-                     paste0(y, collapse = ", "))
-      throw_error("error_bad_names", msg)
-    }
+  if (!identical(dimnames(x), expected)) {
+    msg <- sprintf("%s must have dimnames.", sQuote(arg))
+    throw_error("error_bad_names", msg)
   }
   invisible(x)
 }
 
-check_uuid <- function(x) {
-  arg <- deparse(substitute(x))
-  if (length(x) == 0 || !is_uuid(x)) {
-    msg <- sprintf("%s must be an UUID.", sQuote(arg))
-    throw_error("error_bad_uuid", msg)
-  }
-  if (x == "00000000-0000-4000-a000-000000000000") {
-    msg <- sprintf("%s seems wrong.", sQuote(arg))
-    throw_warning("warning_bad_uuid", msg)
-  }
-  invisible(x)
-}
-
-# NA/NaN/Inf ===================================================================
-#' Check Missing Values
+# NA/NaN/Inf/duplicates ========================================================
+#' Check Data
 #'
-#' Checks if an object contains any missing (`NA`, `NaN`) or infinite (`Inf`)
-#' value.
+#' * `assert_missing()` and `assert_infinite()` check if an object contains any
+#' missing (`NA`, `NaN`) or infinite (`Inf`) value.
+#' * `assert_unique()` checks if an object contains duplicated elements.``
 #' @param x An object to be checked.
-#' @return Throw an error, if any.
+#' @param expected An appropriate expected value.
+#' @return
+#'  Throws an error, if any, and returns `x` invisibly otherwise.
 #' @author N. Frerebeau
-#' @family check
-#' @name check-missing
-#' @rdname check-missing
-#' @keywords internal
+#' @family validation methods
+#' @name check-data
+#' @rdname check-data
 NULL
 
-#' @rdname check-missing
-check_missing <- function(x) {
+#' @export
+#' @rdname check-data
+assert_missing <- function(x) {
   arg <- deparse(substitute(x))
   n <- sum(is.na(x))
   if (n > 0) {
@@ -181,8 +211,9 @@ check_missing <- function(x) {
   invisible(x)
 }
 
-#' @rdname check-missing
-check_infinite <- function(x) {
+#' @export
+#' @rdname check-data
+assert_infinite <- function(x) {
   arg <- deparse(substitute(x))
   n <- sum(is.infinite(x))
   if (n > 0) {
@@ -193,22 +224,42 @@ check_infinite <- function(x) {
   invisible(x)
 }
 
+#' @export
+#' @rdname check-data
+assert_unique <- function(x, expected) {
+  arg <- deparse(substitute(x))
+  if (has_duplicates(x)) {
+    msg <- sprintf("Elements of %s must be unique.", sQuote(arg))
+    throw_error("error_data_duplicates", msg)
+  }
+  invisible(x)
+}
+
 # Numeric ======================================================================
 #' Check Numeric Values
 #'
-#' @param x A [`numeric`] object to be checked.
+#' @param x,y A [`numeric`] object to be checked.
 #' @param expected A [`character`] string specifying the expected
-#'  value. It must be one of "`positive`", "`whole`", "`odd`" or "`even`".
-#' @return Throw an error, if any.
+#'  value (see details).
+#' @param ... Extra parameters to be passed to internal methods.
+#' @details
+#'  Possible values for `expected`:
+#'  \describe{
+#'   \item{`assert_numeric()`}{"`positive`", "`whole`", "`odd`" or "`even`"}
+#'   \item{`assert_trend()`}{"`constant`", "`decreasing`" or "`increasing`"}
+#'   \item{`assert_relation()`}{"`lower`" or "`greater`"}
+#'  }
+#' @return
+#'  Throws an error, if any, and returns `x` invisibly otherwise.
 #' @author N. Frerebeau
-#' @family check
+#' @family validation methods
 #' @name check-numeric
 #' @rdname check-numeric
-#' @keywords internal
 NULL
 
+#' @export
 #' @rdname check-numeric
-check_numbers <- function(x, expected, ...) {
+assert_numeric <- function(x, expected, ...) {
   arg <- deparse(substitute(x))
   predicate <- switch(
     expected,
@@ -225,12 +276,39 @@ check_numbers <- function(x, expected, ...) {
   invisible(x)
 }
 
+#' @export
 #' @rdname check-numeric
-check_constant <- function(x) {
+assert_trend <- function(x, expected, ...) {
   arg <- deparse(substitute(x))
-  if (!is_constant(x)) {
-    msg <- sprintf("%s must be constant.", sQuote(arg))
-    throw_error("error_bad_value", msg)
+  predicate <- switch(
+    expected,
+    constant = is_constant,
+    decreasing = is_decreasing,
+    increasing = is_increasing,
+    stop("Can't find a predicate for this: ", expected, call. = FALSE)
+  )
+  if (!predicate(x, ...)) {
+    msg <- sprintf("%s must be %s.", sQuote(arg), expected)
+    throw_error("error_bad_number", msg)
+  }
+  invisible(x)
+}
+
+#' @export
+#' @rdname check-numeric
+assert_relation <- function(x, y, expected, ...) {
+  arg_x <- deparse(substitute(x))
+  arg_y <- deparse(substitute(y))
+  predicate <- switch(
+    expected,
+    lower = is_lower,
+    greater = is_greater,
+    stop("Can't find a predicate for this: ", expected, call. = FALSE)
+  )
+  if (!predicate(x, y, ...)) {
+    msg <- sprintf("%s must be %s than %s.", sQuote(arg_x), expected,
+                   sQuote(arg_y))
+    throw_error("error_bad_number", msg)
   }
   invisible(x)
 }
@@ -239,64 +317,49 @@ check_constant <- function(x) {
 #' Check Matrix
 #'
 #' @param x A [`matrix`] to be checked.
-#' @param expected An appropriate expected value.
+#' @param expected A [`character`] string specifying the expected
+#'  value. It must be one of "`square`" or "`symmetric`".
 #' @return Throw an error, if any.
 #' @author N. Frerebeau
-#' @family check
+#' @family validation methods
 #' @name check-matrix
 #' @rdname check-matrix
-#' @keywords internal
 NULL
 
-# @rdname check-matrix
-# check_empty <- function(x) {
-#   arg <- sQuote(deparse(substitute(x)))
-#   is_empty <- function(x) sum(x, na.rm = TRUE) == 0
-#   row_empty <- apply(X = x, MARGIN = 1, FUN = is_empty)
-#   col_empty <- apply(X = x, MARGIN = 2, FUN = is_empty)
-#   if (any(row_empty) | any(col_empty)) {
-#     msg <- sprintf("%s contains empty rows or columns.", arg)
-#     throw_warning("warning_data_missing", msg)
-#   }
-#   invisible(x)
-# }
-
+#' @export
 #' @rdname check-matrix
-check_square <- function(x) {
+assert_matrix <- function(x, expected) {
   arg <- deparse(substitute(x))
-  if (!is_square(x)) {
+  predicate <- switch(
+    expected,
+    square = is_square,
+    symmetric = is_symmetric,
+    stop("Can't find a predicate for this: ", expected, call. = FALSE)
+  )
+  if (!predicate(x)) {
     k <- paste0(dim(x), collapse = " x ")
-    msg <- sprintf("%s must be a square matrix, not %s.", sQuote(arg), k)
+    msg <- sprintf("%s must be a %s matrix, not %s.", sQuote(arg), expected, k)
     throw_error("error_bad_matrix", msg)
   }
   invisible(x)
 }
 
-#' @rdname check-matrix
-check_symmetric <- function(x) {
-  arg <- deparse(substitute(x))
-  if (!is_symmetric(x)) {
-    msg <- sprintf("%s must be a symmetric matrix.", sQuote(arg))
-    throw_error("error_bad_matrix", msg)
-  }
-  invisible(x)
-}
-
-# ======================================================================== Graph
+# Graph ========================================================================
 #' Check Graph
 #'
 #' @param x A [`matrix`] to be checked.
 #' @param expected An appropriate expected value.
 #' @return Throw an error, if any.
 #' @author N. Frerebeau
-#' @family check
+#' @family validation methods
 #' @name check-graph
 #' @rdname check-graph
 #' @keywords internal
 NULL
 
+#' @export
 #' @rdname check-graph
-check_dag <- function(x) {
+assert_dag <- function(x) {
   arg <- deparse(substitute(x))
   if (!is_dag(x)) {
     msg <- sprintf("%s must not contain cycles.", sQuote(arg))

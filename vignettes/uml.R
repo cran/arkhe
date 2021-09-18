@@ -5,20 +5,39 @@ nomnoml::nomnoml("
 [<package>arkhe|
 
 [base::matrix||
- replace_NA();
  remove_NA();
+ replace_NA();
+ remove_Inf();
+ replace_Inf();
  remove_zero();
+ replace_zero();
  remove_empty()
 ]
 
 [<abstract>AbundanceMatrix|
  +samples: character;
- +groups: character|
+ +groups: character;
+ +totals: numeric;
+ +dates: integer;
+ +tpq: integer;
+ +taq: integer|
  get_samples();
  set_samples();
  has_groups();
  get_groups();
  set_groups();
+ get_totals();
+ set_totals();
+ has_dates();
+ get_dates();
+ set_dates();
+ has_terminus();
+ get_terminus();
+ set_terminus();
+ get_tpq();
+ set_tpq();
+ get_taq();
+ set_taq();
  as_long();
  as_features()
 ]
@@ -37,12 +56,9 @@ nomnoml::nomnoml("
  get_totals()
 ]
 
-[CompositionMatrix|
- +total: numeric|
+[CompositionMatrix||
  CompositionMatrix();
- as_composition();
- get_totals();
- set_totals()
+ as_composition()
 ]
 
 [IncidenceMatrix||

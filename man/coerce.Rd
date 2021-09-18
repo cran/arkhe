@@ -9,8 +9,6 @@
 \alias{as_count-method}
 \alias{as_composition}
 \alias{as_composition-method}
-\alias{as_abundance}
-\alias{as_abundance-method}
 \alias{as_incidence}
 \alias{as_incidence-method}
 \alias{as_occurrence}
@@ -21,7 +19,6 @@
 \alias{as_stratigraphy-method}
 \alias{as_count,ANY-method}
 \alias{as_composition,ANY-method}
-\alias{as_abundance,ANY-method}
 \alias{as_incidence,ANY-method}
 \alias{as_occurrence,ANY-method}
 \alias{as_stratigraphy,ANY-method}
@@ -36,8 +33,6 @@ as_count(from)
 
 as_composition(from)
 
-as_abundance(from)
-
 as_incidence(from)
 
 as_occurrence(from)
@@ -49,8 +44,6 @@ as_stratigraphy(from)
 \S4method{as_count}{ANY}(from)
 
 \S4method{as_composition}{ANY}(from)
-
-\S4method{as_abundance}{ANY}(from)
 
 \S4method{as_incidence}{ANY}(from)
 
@@ -80,7 +73,7 @@ reversed? Only used if \code{factor} is \code{TRUE}. Useful for plotting.}
 A coerced object.
 }
 \description{
-Coerce
+Coerces an object to a \verb{*Matrix} object.
 }
 \details{
 The following methods coerce an object to a \verb{*Matrix} object:
@@ -94,7 +87,7 @@ The following methods coerce an object to a \verb{*Matrix} object:
 \code{as_stratigraphy()} \tab \linkS4class{StratigraphicMatrix} \tab stratigraphic relationships
 }
 
-\strong{Note that \code{as_count} rounds numeric values to zero decimal places and
+\emph{Note that \code{as_count()} rounds numeric values to zero decimal places and
 then coerces to integer as by \code{as.integer()}.}
 
 \code{as_stratigraphy()} converts a set of stratigraphic relationships (edges)
@@ -112,6 +105,32 @@ bottom units and the second the top units (adjacency).
 a \code{\link{data.frame}} with all informations as extra columns (result may differ
 according to the class of \code{from}).
 }
+\section{Abundance Matrix}{
+
+The \code{CountMatrix}, \code{CompositionMatrix} and \code{IncidenceMatrix} classes have
+special slots:
+\itemize{
+\item \code{samples} for replicated measurements/observation,
+\item \code{groups} to group data by site/area,
+\item \code{dates} to specify the date point estimate of an assemblage,
+\item \code{tqp} and \code{taq} to specify the chronology of an assemblage.
+}
+
+When coercing a \code{data.frame} to a \verb{*Matrix} object, an attempt is made to
+automatically assign values to these slots by mapping column names (case
+insensitive, plural insensitive). This behavior can be disabled by setting
+\code{options(arkhe.autodetect = FALSE)} or overrided by explicitly specifying
+the columns to be used in \verb{as_*()}.
+}
+
+\section{Chronology}{
+
+The way chronological information is handled is somewhat opinionated.
+Sub-annual precision is overkill/meaningless in most situations: dates are
+assumed to be expressed in years CE and are stored as integers (values are
+coerced with \code{as.integer()} and hence truncated towards zero).
+}
+
 \examples{
 ## Create a count matrix
 A0 <- matrix(data = sample(0:10, 100, TRUE), nrow = 20, ncol = 5)
@@ -120,19 +139,19 @@ A0 <- matrix(data = sample(0:10, 100, TRUE), nrow = 20, ncol = 5)
 A1 <- as_count(A0)
 
 ## Coerce to relative frequencies
-B <- as_composition(A1)
+B0 <- as_composition(A1)
 
 ## Row sums are internally stored before coercing to relative frequencies
 ## (use get_totals() to retrieve these values)
 ## This allows to restore the source data
-A2 <- as_count(B)
+A2 <- as_count(B0)
 all(A1 == A2)
 
 ## Coerce to presence/absence
-C <- as_incidence(A1)
+C0 <- as_incidence(A1)
 
 ## Coerce to a co-occurrence matrix
-D <- as_occurrence(A1)
+D0 <- as_occurrence(A1)
 
 ## Coerce to an S3 matrix or data.frame
 X <- as.matrix(A1)
@@ -140,14 +159,9 @@ all(A0 == X)
 
 Y <- data.frame(A1)
 head(Y)
-
-## Collection of features
-# set_dates(A1) <- matrix(sample(0:10, 20, TRUE), nrow = 10, ncol = 2)
-# set_coordinates(A1) <- matrix(sample(0:10, 30, TRUE), nrow = 10, ncol = 3)
-# as_features(A1)
 }
 \seealso{
-Other matrix: 
+Other classes: 
 \code{\link{CompositionMatrix-class}},
 \code{\link{CountMatrix-class}},
 \code{\link{DataMatrix}},
@@ -158,4 +172,4 @@ Other matrix:
 \author{
 N. Frerebeau
 }
-\concept{matrix}
+\concept{classes}

@@ -6,6 +6,11 @@
 #' A virtual S4 class to represent archaeological data.
 #' @slot samples A [`character`] vector.
 #' @slot groups A [`character`] vector.
+#' @slot totals A [`numeric`] vector giving the absolute row sums.
+#' @slot dates An [`integer`] vector specifying the date point estimate of each
+#'  row.
+#' @slot tpq An [`integer`] vector specifying the TPQ of each row.
+#' @slot taq An [`integer`] vector specifying the TAQ of each row.
 #' @section Get and set:
 #'  In the code snippets below, `x` is an `AbundanceMatrix` object.
 #'  \describe{
@@ -13,7 +18,31 @@
 #'   the sample names of `x`.}
 #'   \item{`get_groups(x)` and `set_groups(x) <- value`}{Get or set
 #'   the groups of `x`.}
+#'   \item{`get_dates(x)` and `set_dates(x) <- value`}{Get or set
+#'   the dates of `x`. `value` can be a [`list`] with components `tpq` (TPQ -
+#'   *terminus post quem*) and `taq` (TAQ - *terminus ante quem*) or a
+#'   [`numeric`] vector (point estimate). The elements of `value` are coerced to
+#'   [`integer`] with [as.integer()] (hence truncated towards zero).}
 #'  }
+#' @section Abundance Matrix:
+#'  The `CountMatrix`, `CompositionMatrix` and `IncidenceMatrix` classes have
+#'  special slots:
+#'
+#'  * `samples` for replicated measurements/observation,
+#'  * `groups` to group data by site/area,
+#'  * `dates` to specify the date point estimate of an assemblage,
+#'  * `tqp` and `taq` to specify the chronology of an assemblage.
+#'
+#'  When coercing a `data.frame` to a `*Matrix` object, an attempt is made to
+#'  automatically assign values to these slots by mapping column names (case
+#'  insensitive, plural insensitive). This behavior can be disabled by setting
+#'  `options(arkhe.autodetect = FALSE)` or overrided by explicitly specifying
+#'  the columns to be used in `as_*()`.
+#' @section Chronology:
+#'  The way chronological information is handled is somewhat opinionated.
+#'  Sub-annual precision is overkill/meaningless in most situations: dates are
+#'  assumed to be expressed in years CE and are stored as integers (values are
+#'  coerced with `as.integer()` and hence truncated towards zero).
 #' @author N. Frerebeau
 #' @docType class
 #' @aliases AbundanceMatrix-class
@@ -22,9 +51,24 @@
   Class = "AbundanceMatrix",
   slots = c(
     samples = "character",
-    groups = "character"
+    groups = "character",
+    totals = "numeric",
+    dates = "integer",
+    tpq = "integer",
+    taq = "integer"
   ),
   contains = "VIRTUAL"
+)
+
+.AbundanceSummary <- setClass(
+  Class = "AbundanceSummary",
+  slots = c(
+    groups = "character",
+    rows = "integer",
+    columns = "integer",
+    replicates = "logical",
+    chronology = "matrix"
+  )
 )
 
 # DataMatrix ===================================================================
@@ -34,7 +78,7 @@
 #' @note
 #'  These classes inherit from [`matrix`].
 #' @author N. Frerebeau
-#' @family matrix
+#' @family classes
 #' @docType class
 #' @name DataMatrix
 #' @rdname DataMatrix
@@ -75,32 +119,15 @@ NULL
 #' @seealso [as_count()]
 #' @example inst/examples/ex-matrix.R
 #' @author N. Frerebeau
-#' @family matrix
+#' @family classes
 #' @docType class
+#' @export .CountMatrix
 #' @exportClass CountMatrix
 #' @aliases CountMatrix-class
 .CountMatrix <- setClass(
   Class = "CountMatrix",
   contains = c("IntegerMatrix", "AbundanceMatrix")
 )
-
-#' @export
-#' @rdname CountMatrix-class
-CountMatrix <- function(data = 0, nrow = 1, ncol = 1, byrow = FALSE,
-                        dimnames = NULL) {
-  mtx <- make_matrix(
-    data = as_integer(data),
-    nrow = nrow,
-    ncol = ncol,
-    byrow = byrow,
-    dimnames = dimnames,
-    missing(nrow),
-    missing(ncol)
-  )
-  spl <- rownames(mtx) %||% character(0)
-
-  .CountMatrix(mtx, samples = spl)
-}
 
 ## OccurrenceMatrix ------------------------------------------------------------
 #' Co-Occurrence Matrix
@@ -114,7 +141,7 @@ CountMatrix <- function(data = 0, nrow = 1, ncol = 1, byrow = FALSE,
 #' @seealso [as_occurrence()]
 #' @example inst/examples/ex-matrix.R
 #' @author N. Frerebeau
-#' @family matrix
+#' @family classes
 #' @docType class
 #' @aliases OccurrenceMatrix-class
 .OccurrenceMatrix <- setClass(
@@ -131,44 +158,19 @@ CountMatrix <- function(data = 0, nrow = 1, ncol = 1, byrow = FALSE,
 #'
 #' An S4 class to represent a relative frequency matrix (i.e. the fraction of
 #' times a given datum occurs in a dataset).
-#' @slot total A [`numeric`] vector giving the absolute row sums.
 #' @inheritParams base::matrix
 #' @seealso [as_composition()]
 #' @example inst/examples/ex-matrix.R
 #' @author N. Frerebeau
-#' @family matrix
+#' @family classes
 #' @docType class
 #' @export .CompositionMatrix
 #' @exportClass CompositionMatrix
 #' @aliases CompositionMatrix-class
 .CompositionMatrix <- setClass(
   Class = "CompositionMatrix",
-  slots = c(
-    total = "numeric"
-  ),
   contains = c("NumericMatrix", "AbundanceMatrix")
 )
-
-#' @export
-#' @rdname CompositionMatrix-class
-CompositionMatrix <- function(data = 0, nrow = 1, ncol = 1, byrow = FALSE,
-                            dimnames = NULL) {
-  mtx <- make_matrix(
-    data = as.numeric(data),
-    nrow = nrow,
-    ncol = ncol,
-    byrow = byrow,
-    dimnames = dimnames,
-    missing(nrow),
-    missing(ncol)
-  )
-  spl <- rownames(mtx) %||% character(0)
-  totals <- rowSums(mtx, na.rm = TRUE)
-  mtx <- mtx / totals
-  # mtx[is.nan(mtx)] <- 0 # Prevent division by zero
-
-  .CompositionMatrix(mtx, samples = spl, total = totals)
-}
 
 # LogicalMatrix ================================================================
 ## IncidenceMatrix -------------------------------------------------------------
@@ -179,7 +181,7 @@ CompositionMatrix <- function(data = 0, nrow = 1, ncol = 1, byrow = FALSE,
 #' @seealso [as_incidence()]
 #' @example inst/examples/ex-matrix.R
 #' @author N. Frerebeau
-#' @family matrix
+#' @family classes
 #' @docType class
 #' @export .IncidenceMatrix
 #' @exportClass IncidenceMatrix
@@ -188,24 +190,6 @@ CompositionMatrix <- function(data = 0, nrow = 1, ncol = 1, byrow = FALSE,
   Class = "IncidenceMatrix",
   contains = c("LogicalMatrix", "AbundanceMatrix")
 )
-
-#' @export
-#' @rdname IncidenceMatrix-class
-IncidenceMatrix <- function(data = FALSE, nrow = 1, ncol = 1, byrow = FALSE,
-                            dimnames = NULL) {
-  mtx <- make_matrix(
-    data = as.logical(data),
-    nrow = nrow,
-    ncol = ncol,
-    byrow = byrow,
-    dimnames = dimnames,
-    missing(nrow),
-    missing(ncol)
-  )
-  spl <- rownames(mtx) %||% character(0)
-
-  .IncidenceMatrix(mtx, samples = spl)
-}
 
 ## Stratigraphic ---------------------------------------------------------------
 #' Stratigraphic Matrix
@@ -219,7 +203,7 @@ IncidenceMatrix <- function(data = FALSE, nrow = 1, ncol = 1, byrow = FALSE,
 #' @seealso [as_stratigraphy()]
 #' @example inst/examples/ex-stratigraphy.R
 #' @author N. Frerebeau
-#' @family matrix
+#' @family classes
 #' @docType class
 #' @aliases StratigraphicMatrix-class
 .StratigraphicMatrix <- setClass(

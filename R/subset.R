@@ -20,33 +20,18 @@ setMethod(
     if (!missing(i)) {
       samples <- x@samples
       groups <- x@groups
-      if (length(samples) > 0) samples <- samples[i]
-      if (length(groups) > 0) groups <- groups[i]
-      methods::initialize(x, z, samples = samples, groups = groups)
-    } else{
-      methods::initialize(x, z)
-    }
-  }
-)
-
-#' @export
-#' @rdname subset
-#' @aliases [,CompositionMatrix-method
-setMethod(
-  f = "[",
-  signature = c(x = "CompositionMatrix"),
-  function(x, i, j, ..., drop = TRUE) {
-    totals <- x@total
-    x@total <- numeric(0)
-
-    z <- methods::callNextMethod()
-
-    if (is.null(dim(z))) {
-      return(z)
-    }
-
-    if (!missing(i) & length(totals) > 0) {
-      methods::initialize(x, z, total = totals[i])
+      totals <- x@totals
+      dates <- x@dates
+      tpq <- x@tpq
+      taq <- x@taq
+      if (!is_empty(samples)) samples <- samples[i]
+      if (!is_empty(groups)) groups <- groups[i]
+      if (!is_empty(totals)) totals <- totals[i]
+      if (!is_empty(dates)) dates <- dates[i]
+      if (!is_empty(tpq)) tpq <- tpq[i]
+      if (!is_empty(taq)) taq <- taq[i]
+      methods::initialize(x, z, samples = samples, groups = groups,
+                          totals = totals, dates = dates, tpq = tpq, taq = taq)
     } else{
       methods::initialize(x, z)
     }

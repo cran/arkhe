@@ -3,12 +3,18 @@
 # Helpers ======================================================================
 #' Utility Predicates
 #'
-#' * `is_empty()` checks if a vector or list is empty.
-#' * `is_missing()` checks if a vector or list contains missing values.
-#' * `is_named()` checks if an object is named.
-#' * `is_uuid()` checks if a string is a canonically formatted UUID that is
-#'   version 1 through 5 and is the appropriate Variant as per RFC4122.
-#' @param x An object to be tested.
+#' * `is_empty()` checks is an object is empty (any zero-length dimensions).
+#' * `has_length()` checks how long is an object.
+#' * `has_names()` checks if an object is named.
+#' * `has_duplicates()` checks if an object has duplicated elements.
+#' * `has_missing()` and `has_infinite()` check if an object contains missing
+#' or infinite values.
+#' @param x A [`vector`] to be tested.
+#' @param n A length-one [`numeric`] vector specifying the length to test `x`
+#'  with. If `NULL`, returns `TRUE` if `x` has length greater than zero, and
+#'  `FALSE` otherwise.
+#' @param names A [`character`] vector specifying the names to test `x`
+#'  with. If `NULL`, returns `TRUE` if `x` has names, and `FALSE` otherwise.
 #' @return A [`logical`] scalar.
 #' @family predicates
 #' @name predicate-utils
@@ -17,18 +23,37 @@ NULL
 
 #' @export
 #' @rdname predicate-utils
-is_empty <- function(x) {
-  length(x) == 0
+has_length <- function(x, n = NULL) {
+  if (is.null(n)) length(x) > 0 else length(x) == n
 }
 #' @export
 #' @rdname predicate-utils
-is_named <- function(x) {
-  !is_empty(names(x))
+has_names <- function(x, names = NULL) {
+  if (is.null(names)) {
+    has_length(names(x))
+  } else {
+    identical(names(x), names)
+  }
 }
-
-is_uuid <- function(x) {
-  pattern <- "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
-  grepl(pattern, x)
+#' @export
+#' @rdname predicate-utils
+has_duplicates <- function(x) {
+  any(duplicated(x))
+}
+#' @export
+#' @rdname predicate-utils
+has_missing <- function(x) {
+  any(is.na(x))
+}
+#' @export
+#' @rdname predicate-utils
+has_infinite <- function(x) {
+  any(is.infinite(x))
+}
+#' @export
+#' @rdname predicate-utils
+is_empty <- function(x) {
+  any((dim(x) %||% length(x)) == 0)
 }
 
 # Type =========================================================================
@@ -142,8 +167,6 @@ is_scalar_logical <- function(x) {
 #' @param x A [`numeric`] object to be tested.
 #' @param tolerance A [`numeric`] scalar giving the tolerance to check within.
 #' @param strict A [`logical`] scalar: should strict inequality be used?
-#' @param finite A [`logical`] scalar: should non-[`finite`] values also be
-#'  removed?
 #' @param na.rm A [`logical`] scalar: should missing values (including `NaN`)
 #'  be omitted?
 #' @return A [`logical`] vector.
@@ -152,49 +175,45 @@ is_scalar_logical <- function(x) {
 #' @rdname predicate-numeric
 NULL
 
-#' @rdname predicate-numeric
-is_missing <- function(x, finite = FALSE) {
-  if (finite) !is.finite(x) else is.na(x)
-}
 #' @export
 #' @rdname predicate-numeric
 is_zero <- function(x, na.rm = FALSE) {
-  check_type(x, "numeric")
+  assert_type(x, "numeric")
   if (na.rm) x <- stats::na.omit(x)
   x == 0
 }
 #' @export
 #' @rdname predicate-numeric
 is_odd <- function(x, na.rm = FALSE) { # impair
-  check_type(x, "numeric")
+  assert_type(x, "numeric")
   if (na.rm) x <- stats::na.omit(x)
   as.logical(x %% 2)
 }
 #' @export
 #' @rdname predicate-numeric
 is_even <- function(x, na.rm = FALSE) { # pair
-  check_type(x, "numeric")
+  assert_type(x, "numeric")
   if (na.rm) x <- stats::na.omit(x)
   !as.logical(x %% 2)
 }
 #' @export
 #' @rdname predicate-numeric
 is_positive <- function(x, strict = FALSE, na.rm = FALSE) {
-  check_type(x, "numeric")
+  assert_type(x, "numeric")
   if (na.rm) x <- stats::na.omit(x)
   if (strict) x > 0 else x >= 0
 }
 #' @export
 #' @rdname predicate-numeric
 is_negative <- function(x, strict = FALSE, na.rm = FALSE) {
-  check_type(x, "numeric")
+  assert_type(x, "numeric")
   if (na.rm) x <- stats::na.omit(x)
   if (strict) x < 0 else x <= 0
 }
 #' @export
 #' @rdname predicate-numeric
 is_whole <- function(x, na.rm = FALSE, tolerance = .Machine$double.eps^0.5) {
-  check_type(x, "numeric")
+  assert_type(x, "numeric")
   if (na.rm) x <- stats::na.omit(x)
   abs(x - round(x, digits = 0)) <= tolerance
 }
@@ -205,9 +224,9 @@ is_whole <- function(x, na.rm = FALSE, tolerance = .Machine$double.eps^0.5) {
 #' * `is_constant()` checks for equality among all elements of a vector.
 #' * `is_increasing()` and `is_decreasing()` check if a sequence of numbers
 #'   is monotonically increasing or decreasing, respectively.
-#' * `is_overlapping()` checks if two data ranges overlap at all.
-#' @param x A [`numeric`] object to be tested.
+#' @param x,y A [`numeric`] object to be tested.
 #' @param tolerance A [`numeric`] scalar giving the tolerance to check within.
+#' @param strict A [`logical`] scalar: should strict inequality be used?
 #' @param na.rm A [`logical`] scalar: should missing values (including `NaN`)
 #'  be omitted?
 #' @return A [`logical`] scalar.
@@ -218,30 +237,40 @@ NULL
 
 #' @export
 #' @rdname predicate-trend
-is_constant <- function(x, tolerance = .Machine$double.eps^0.5, na.rm = TRUE) {
-  check_type(x, "numeric")
-
-  k <- abs(max(x, na.rm = na.rm) - min(x, na.rm = na.rm)) <= tolerance
-  if (is.na(k)) k <- FALSE
-  k
+is_constant <- function(x, tolerance = .Machine$double.eps^0.5, na.rm = FALSE) {
+  assert_type(x, "numeric")
+  if (na.rm) x <- stats::na.omit(x)
+  abs(max(x) - min(x)) <= tolerance
 }
 #' @export
 #' @rdname predicate-trend
-is_increasing <- function(x, na.rm = TRUE) {
-  check_type(x, "numeric")
-
-  k <- all(x == cummax(x), na.rm = na.rm)
-  if (is.na(k)) k <- FALSE
-  k
+is_increasing <- function(x, na.rm = FALSE) {
+  assert_type(x, "numeric")
+  if (na.rm) x <- stats::na.omit(x)
+  all(x == cummax(x))
 }
 #' @export
 #' @rdname predicate-trend
-is_decreasing <- function(x, na.rm = TRUE) {
-  check_type(x, "numeric")
-
-  k <- all(x == cummin(x), na.rm = na.rm)
-  if (is.na(k)) k <- FALSE
-  k
+is_decreasing <- function(x, na.rm = FALSE) {
+  assert_type(x, "numeric")
+  if (na.rm) x <- stats::na.omit(x)
+  all(x == cummin(x))
+}
+#' @export
+#' @rdname predicate-trend
+is_greater <- function(x, y, strict = FALSE, na.rm = FALSE) {
+  assert_type(x, "numeric")
+  assert_type(y, "numeric")
+  z <- if (strict) x > y else x >= y
+  all(z, na.rm = na.rm)
+}
+#' @export
+#' @rdname predicate-trend
+is_lower <- function(x, y, strict = FALSE, na.rm = FALSE) {
+  assert_type(x, "numeric")
+  assert_type(y, "numeric")
+  z <- if (strict) x < y else x <= y
+  all(z, na.rm = na.rm)
 }
 
 # Matrix =======================================================================
