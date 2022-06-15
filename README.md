@@ -6,16 +6,23 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/tesselle/arkhe/workflows/R-CMD-check/badge.svg)](https://github.com/tesselle/arkhe/actions)
-[![codecov](https://codecov.io/gh/tesselle/arkhe/branch/master/graph/badge.svg)](https://codecov.io/gh/tesselle/arkhe)
-[![CodeFactor](https://www.codefactor.io/repository/github/tesselle/arkhe/badge/master)](https://www.codefactor.io/repository/github/tesselle/arkhe/overview/master)
+[![codecov](https://codecov.io/gh/tesselle/arkhe/branch/main/graph/badge.svg)](https://app.codecov.io/gh/tesselle/arkhe)
+[![CodeFactor](https://www.codefactor.io/repository/github/tesselle/arkhe/badge/main)](https://www.codefactor.io/repository/github/tesselle/arkhe/overview/main)
 
-[![r-universe](https://tesselle.r-universe.dev/badges/arkhe)](https://tesselle.r-universe.dev)
-[![CRAN
-Version](http://www.r-pkg.org/badges/version/arkhe)](https://cran.r-project.org/package=arkhe)
-[![CRAN
-checks](https://cranchecks.info/badges/worst/arkhe)](https://cran.r-project.org/web/checks/check_results_arkhe.html)
-[![CRAN
-Downloads](http://cranlogs.r-pkg.org/badges/arkhe)](https://cran.r-project.org/package=arkhe)
+<a href="https://tesselle.r-universe.dev" class="pkgdown-devel"><img
+src="https://tesselle.r-universe.dev/badges/arkhe"
+alt="r-universe" /></a>
+<a href="https://cran.r-project.org/package=arkhe"
+class="pkgdown-release"><img
+src="http://www.r-pkg.org/badges/version/arkhe"
+alt="CRAN Version" /></a>
+<a href="https://cran.r-project.org/web/checks/check_results_arkhe.html"
+class="pkgdown-release"><img
+src="https://cranchecks.info/badges/worst/arkhe"
+alt="CRAN checks" /></a>
+<a href="https://cran.r-project.org/package=arkhe"
+class="pkgdown-release"><img
+src="http://cranlogs.r-pkg.org/badges/arkhe" alt="CRAN Downloads" /></a>
 
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
@@ -147,63 +154,63 @@ Z <- as_count(Y)
 
 ## Get groups
 get_samples(Z)
-#>  [1] "d" "e" "a" "c" "b" "e" "e" "b" "a" "b" "c" "b" "a" "a" "d"
+#>  [1] "d" "a" "b" "e" "b" "e" "b" "d" "e" "d" "d" "e" "e" "e" "a"
 
 ## Get groups
 get_groups(Z)
-#>  [1] "A" "D" "A" "E" "D" "C" "C" "A" "C" "B" "C" "B" "D" "D" "A"
+#>  [1] "A" "E" "A" "B" "A" "D" "A" "E" "D" "B" "E" "D" "A" "A" "C"
 
 ## Get dates
 get_dates(Z)
-#>  [1] 1428 1400 1430 1413 1421 1421 1451 1418 1442 1413 1401 1435 1447 1412 1405
+#>  [1] 1442 1449 1431 1439 1429 1411 1400 1439 1437 1440 1444 1418 1450 1436 1427
 
 ## Get chronology
 get_terminus(Z)
 #>        tpq  taq
-#> row1  1382 1497
-#> row2  1332 1456
-#> row3  1322 1468
-#> row4  1373 1490
-#> row5  1383 1480
-#> row6  1352 1490
-#> row7  1329 1499
-#> row8  1374 1487
-#> row9  1357 1486
-#> row10 1398 1495
-#> row11 1348 1467
-#> row12 1338 1463
-#> row13 1354 1477
-#> row14 1306 1470
-#> row15 1361 1486
+#> row1  1302 1486
+#> row2  1346 1496
+#> row3  1349 1456
+#> row4  1372 1485
+#> row5  1370 1495
+#> row6  1318 1455
+#> row7  1389 1467
+#> row8  1377 1488
+#> row9  1346 1462
+#> row10 1308 1487
+#> row11 1362 1464
+#> row12 1400 1451
+#> row13 1312 1464
+#> row14 1316 1483
+#> row15 1332 1468
 
 ## Summarize
 summary(Z)
 #> <AbundanceSummary: 15 x 5>
 #> A ------------------------------------------------------------------------------
-#> * Observations: 4
+#> * Observations: 6
 #> * Variables: 5
 #> * Replicated measurements: TRUE
-#> * Chronology: 1322 - 1497 (year CE)
+#> * Chronology: 1302 - 1495 (year CE)
 #> B ------------------------------------------------------------------------------
 #> * Observations: 2
 #> * Variables: 5
-#> * Replicated measurements: TRUE
-#> * Chronology: 1338 - 1495 (year CE)
+#> * Replicated measurements: FALSE
+#> * Chronology: 1308 - 1487 (year CE)
 #> C ------------------------------------------------------------------------------
-#> * Observations: 4
-#> * Variables: 5
-#> * Replicated measurements: TRUE
-#> * Chronology: 1329 - 1499 (year CE)
-#> D ------------------------------------------------------------------------------
-#> * Observations: 4
-#> * Variables: 5
-#> * Replicated measurements: TRUE
-#> * Chronology: 1306 - 1480 (year CE)
-#> E ------------------------------------------------------------------------------
 #> * Observation: 1
 #> * Variables: 5
 #> * Replicated measurements: FALSE
-#> * Chronology: 1373 - 1490 (year CE)
+#> * Chronology: 1332 - 1468 (year CE)
+#> D ------------------------------------------------------------------------------
+#> * Observations: 3
+#> * Variables: 5
+#> * Replicated measurements: TRUE
+#> * Chronology: 1318 - 1462 (year CE)
+#> E ------------------------------------------------------------------------------
+#> * Observations: 3
+#> * Variables: 5
+#> * Replicated measurements: TRUE
+#> * Chronology: 1346 - 1496 (year CE)
 #> --------------------------------------------------------------------------------
 ```
 

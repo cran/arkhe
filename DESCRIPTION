@@ -1,17 +1,19 @@
 Package: arkhe
 Title: Representation of Archaeological Data
-Version: 0.4.0
+Version: 0.5.0
 Authors@R: 
     c(person(given = "Nicolas",
              family = "Frerebeau",
              role = c("aut", "cre"),
              email = "nicolas.frerebeau@u-bordeaux-montaigne.fr",
-             comment = c(ORCID = "0000-0001-5759-4944")),
+             comment = c(ORCID = "0000-0001-5759-4944", 
+                         affiliation = "Université Bordeaux Montaigne")),
       person(given = "Brice",
              family = "Lebrun",
              role = "ctb",
              email = "brice.lebrun@u-bordeaux-montaigne.fr",
-             comment = c(ORCID = "0000-0001-7503-8685")))
+             comment = c(ORCID = "0000-0001-7503-8685",
+                         affiliation = "Université Bordeaux Montaigne")))
 Maintainer: Nicolas Frerebeau
  <nicolas.frerebeau@u-bordeaux-montaigne.fr>
 Description: A collection of classes that represent
@@ -33,14 +35,17 @@ Suggests: covr, knitr, rmarkdown, testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 Encoding: UTF-8
-RoxygenNote: 7.1.1
-Collate: 'AllClasses.R' 'AllGenerics.R' 'arkhe-package.R'
-        'predicates.R' 'check.R' 'clean.R' 'coerce.R' 'conditions.R'
-        'initialize.R' 'mutators.R' 'show.R' 'subset.R' 'summary.R'
-        'utilities.R' 'validate.R' 'zzz.R'
+RoxygenNote: 7.2.0
+Collate: 'AllClasses.R' 'AllGenerics.R' 'arkhe-package.R' 'assign.R'
+        'predicates.R' 'check.R' 'coerce.R' 'compact.R' 'conditions.R'
+        'detect.R' 'initialize.R' 'mutators.R' 'replace.R' 'show.R'
+        'statistics.R' 'subset.R' 'summary.R' 'utilities.R'
+        'validate.R' 'zzz.R'
 NeedsCompilation: no
-Packaged: 2021-09-18 13:47:54 UTC; nicolas
-Author: Nicolas Frerebeau [aut, cre] (<https://orcid.org/0000-0001-5759-4944>),
-  Brice Lebrun [ctb] (<https://orcid.org/0000-0001-7503-8685>)
+Packaged: 2022-06-11 23:14:27 UTC; nicolas
+Author: Nicolas Frerebeau [aut, cre] (<https://orcid.org/0000-0001-5759-4944>,
+    Université Bordeaux Montaigne),
+  Brice Lebrun [ctb] (<https://orcid.org/0000-0001-7503-8685>, Université
+    Bordeaux Montaigne)
 Repository: CRAN
-Date/Publication: 2021-09-18 14:20:02 UTC
+Date/Publication: 2022-06-15 09:30:12 UTC
