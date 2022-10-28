@@ -5,17 +5,17 @@
 \alias{arkhe-package}
 \alias{_PACKAGE}
 \alias{arkhe}
-\title{arkhe: Representation of Archaeological Data}
+\title{arkhe: Tools for Cleaning Rectangular Data}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-A collection of classes that represent archaeological data. This package provides a set of S4 classes that represent different special types of matrix (absolute/relative frequency, presence/absence data, co-occurrence matrix, etc.) upon which package developers can build subclasses. It also provides a set of generic methods (mutators and coercion mechanisms) and functions (e.g. summary statistics, predicates). In addition, a few classes of general interest (e.g. that represent stratigraphic relationships) are implemented.
+A dependency-free collection of simple functions for cleaning rectangular data. This package allows to detect, count and replace values or discard rows/columns using a predicate function. In addition, it provides tools to check conditions and return informative error messages.
 }
 \details{
 \tabular{ll}{
 \strong{Package:} \tab arkhe \cr
 \strong{Type:} \tab Package \cr
-\strong{Version:} \tab 0.5.0 \cr
+\strong{Version:} \tab 1.0.0 \cr
 \strong{License:} \tab GPL-3 \cr
 \strong{Zenodo:} \tab \doi{10.5281/zenodo.3526659} \cr
 }
@@ -24,9 +24,6 @@ A collection of classes that represent archaeological data. This package provide
 
 \code{arkhe} uses the following \code{\link[=options]{options()}} to configure behavior:
 \itemize{
-\item \code{arkhe.autodetect}: a \code{\link{logical}} scalar. Try to automatically assign
-values to the corresponding slot of a \verb{*Matrix} object when coercing a
-\code{data.frame}? Defaults to \code{TRUE}.
 \item \code{arkhe.verbose}: a \code{\link{logical}} scalar. Should \R report extra information
 on progress? Defaults to \code{TRUE}.
 }
@@ -54,7 +51,7 @@ Brice Lebrun \tab \emph{Université Bordeaux Montaigne, France} \cr
 Nicolas Frerebeau\cr
 \email{nicolas.frerebeau@u-bordeaux-montaigne.fr}
 
-IRAMAT-CRP2A (UMR 5060)\cr
+Archéosciences Bordeaux (UMR 6034)\cr
 Maison de l'Archéologie\cr
 Université Bordeaux Montaigne\cr
 F-33607 Pessac cedex\cr

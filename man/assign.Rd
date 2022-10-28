@@ -39,14 +39,25 @@ A \code{\link{data.frame}}.
 \description{
 Assign a specific row/column to the column/row names
 }
+\examples{
+X <- data.frame(
+  x = 1:5,
+  y = 6:10,
+  z = LETTERS[1:5]
+)
+
+## Assign column to row names
+(Y <- assign_rownames(X, 3))
+
+## Append row names to data.frame
+(Z <- append_rownames(Y))
+}
 \seealso{
-Other data cleaning tools: 
-\code{\link{count}()},
-\code{\link{detect}()},
-\code{\link{remove}()},
-\code{\link{replace}()}
+Other transformation tools: 
+\code{\link{append}()},
+\code{\link{reshape}()}
 }
 \author{
 N. Frerebeau
 }
-\concept{data cleaning tools}
+\concept{transformation tools}

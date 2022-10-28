@@ -6,7 +6,7 @@
 \alias{count-method}
 \alias{count,matrix,function-method}
 \alias{count,data.frame,function-method}
-\title{Count values according to a given predicate}
+\title{Count values using a predicate}
 \usage{
 count(x, f, ...)
 
@@ -31,7 +31,7 @@ instead of \code{f}?}
 A \code{\link{numeric}} vector.
 }
 \description{
-Counts values by rows/columns according to a given predicate.
+Counts values by rows/columns using a predicate function.
 }
 \examples{
 ## Create a count data matrix
@@ -52,20 +52,28 @@ detect(X, f = is.na, margin = 1)
 ## Find column without any NA
 detect(X, f = is.na, margin = 2, negate = TRUE, all = TRUE)
 
+## Keep row without any NA
+keep(X, f = is.na, margin = 1, negate = TRUE, all = TRUE)
+## Keep row without any NA
+keep(X, f = is.na, margin = 2, negate = TRUE, all = TRUE)
+
 ## Remove row with any NA
-compact(X, f = is.na, margin = 1, all = FALSE)
+discard(X, f = is.na, margin = 1, all = FALSE)
 ## Remove column with any NA
-compact(X, f = is.na, margin = 2, all = FALSE)
+discard(X, f = is.na, margin = 2, all = FALSE)
 
 ## Replace NA with zeros
 replace_NA(X, value = 0)
 }
 \seealso{
 Other data cleaning tools: 
-\code{\link{assign}()},
+\code{\link{compact}()},
 \code{\link{detect}()},
-\code{\link{remove}()},
-\code{\link{replace}()}
+\code{\link{discard}()},
+\code{\link{infinite}},
+\code{\link{keep}()},
+\code{\link{missing}},
+\code{\link{zero}}
 }
 \author{
 N. Frerebeau
