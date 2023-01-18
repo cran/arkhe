@@ -11,12 +11,10 @@ assert_missing(x)
 
 assert_infinite(x)
 
-assert_unique(x, expected)
+assert_unique(x)
 }
 \arguments{
 \item{x}{An object to be checked.}
-
-\item{expected}{An appropriate expected value.}
 }
 \value{
 Throws an error, if any, and returns \code{x} invisibly otherwise.
@@ -36,6 +34,7 @@ Other validation methods:
 \code{\link{check-numeric-trend}},
 \code{\link{check-numeric}},
 \code{\link{check-type}},
+\code{\link{needs}()},
 \code{\link{validate}()}
 }
 \author{

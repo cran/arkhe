@@ -1,4 +1,5 @@
 # GENERIC METHODS
+#' @importFrom methods setGeneric setMethod .valueClassTest
 NULL
 
 # Data cleaning ================================================================
@@ -119,11 +120,6 @@ setGeneric(
 #' @author N. Frerebeau
 #' @docType methods
 #' @family data cleaning tools
-#' @name compact
-#' @rdname compact
-NULL
-
-#' @rdname compact
 #' @aliases compact-method
 setGeneric(
   name = "compact",
@@ -321,6 +317,14 @@ setGeneric(
 NULL
 
 #' @rdname reshape
+#' @aliases wide_to_long-method
+setGeneric(
+  name = "wide_to_long",
+  def = function(from, ...) standardGeneric("wide_to_long"),
+  valueClass = "data.frame"
+)
+
+#' @rdname reshape
 #' @aliases to_long-method
 setGeneric(
   name = "to_long",
@@ -464,24 +468,13 @@ setGeneric(
 # Deprecated ===================================================================
 #' Deprecated Methods
 #'
-#' @param from An object to be coerced.
-#' @param factor A [`logical`] scalar: should character string be
-#'  coerced to [`factor`]? Default to `FALSE`, if `TRUE` the original ordering is
-#'  preserved.
-#' @param reverse A [`logical`] scalar: should the order of factor levels be
-#'  reversed? Only used if `factor` is `TRUE`. Useful for plotting.
 #' @param object A [`numeric`] vector.
 #' @param level A length-one [`numeric`] vector giving the confidence level.
 #'  Must be a single number between \eqn{0} and \eqn{1}.
 #' @param type A [`character`] string giving the type of confidence
 #'  interval to be returned. It must be one "`student`" (the default) or
 #'  "`normal`". Any unambiguous substring can be given.
-#' @param x,y A [`numeric`] object to be checked.
-#' @param expected A [`character`] string specifying the expected
-#'  value (see details).
-#' @param margin A vector giving the subscripts which the function will be
-#'  applied over (`1` indicates rows, `2` indicates columns).
-#' @param ... Extra parameters to be passed to internal methods.
+#' @param ... Currently not used.
 #' @author N. Frerebeau
 #' @docType methods
 #' @name deprecate

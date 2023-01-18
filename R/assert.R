@@ -2,6 +2,52 @@
 #' @include predicates.R
 NULL
 
+#' Check the Availability of a Package
+#'
+#' @param x A [`character`] vector naming the packages to check.
+#' @param ask A [`logical`] scalar: should the user be asked to select packages
+#'  before they are downloaded and installed?
+#' @details
+#'  `needs()` is designed for use inside other functions in your own package
+#'  to check for the availability of a suggested package.
+#'
+#'  If the required packages are not available and \R is running interactively,
+#'  the user will be asked to install the packages.
+#' @return Invisibly returns `NULL`.
+#' @family validation methods
+#' @author N. Frerebeau
+#' @export
+needs <- function(x, ask = TRUE) {
+  ok <- vapply(X = x, FUN = requireNamespace, FUN.VALUE = logical(1),
+               quietly = TRUE)
+
+  miss <- x[!ok]
+  n <- length(miss)
+
+  if (n != 0) {
+    msg <- ngettext(n, "Package %s is required.", "Packages %s are required.")
+    pkg <- paste0(sQuote(miss), collapse = ", ")
+    err <- sprintf(msg, pkg)
+    install <- "0"
+    if (ask && interactive()) {
+      cat(
+        err,
+        sprintf("Do you want to install %s?", ngettext(n, "it", "them")),
+        "1. Yes",
+        "2. No",
+        sep = "\n"
+      )
+      install <- readline("Choice: ")
+    }
+    if (install == "1") {
+      utils::install.packages(miss)
+    } else {
+      throw_error("error_missing_package", err)
+    }
+  }
+  invisible(NULL)
+}
+
 #' Validate a Condition
 #'
 #' @param expr An object to be evaluated.
@@ -211,7 +257,6 @@ assert_colnames <- function(x, expected) {
 #' missing (`NA`, `NaN`) or infinite (`Inf`) value.
 #' * `assert_unique()` checks if an object contains duplicated elements.
 #' @param x An object to be checked.
-#' @param expected An appropriate expected value.
 #' @return
 #'  Throws an error, if any, and returns `x` invisibly otherwise.
 #' @author N. Frerebeau
@@ -248,7 +293,7 @@ assert_infinite <- function(x) {
 
 #' @export
 #' @rdname check-data
-assert_unique <- function(x, expected) {
+assert_unique <- function(x) {
   arg <- deparse(substitute(x))
   if (has_duplicates(x)) {
     msg <- sprintf("Elements of %s must be unique.", sQuote(arg))

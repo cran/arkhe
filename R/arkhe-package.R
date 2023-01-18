@@ -2,7 +2,7 @@
 #'  \tabular{ll}{
 #'   **Package:** \tab arkhe \cr
 #'   **Type:** \tab Package \cr
-#'   **Version:** \tab 1.0.0 \cr
+#'   **Version:** \tab 1.1.0 \cr
 #'   **License:** \tab GPL-3 \cr
 #'   **Zenodo:** \tab \doi{10.5281/zenodo.3526659} \cr
 #'  }
@@ -35,8 +35,3 @@
 #' @docType package
 #' @keywords internal
 "_PACKAGE"
-
-#' @importFrom methods callGeneric callNextMethod setGeneric setMethod
-#' .valueClassTest
-#' @importFrom stats quantile na.omit rmultinom sd xtabs
-NULL
