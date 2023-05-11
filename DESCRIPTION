@@ -1,6 +1,6 @@
 Package: arkhe
 Title: Tools for Cleaning Rectangular Data
-Version: 1.1.0
+Version: 1.2.0
 Authors@R: 
     c(person(given = "Nicolas",
              family = "Frerebeau",
@@ -29,16 +29,16 @@ Imports: methods, stats, utils
 Suggests: testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Encoding: UTF-8
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Collate: 'AllGenerics.R' 'append.R' 'arkhe-package.R' 'predicates.R'
         'assert.R' 'assign.R' 'compact.R' 'conditions.R' 'deprecate.R'
-        'detect.R' 'discard.R' 'keep.R' 'replace.R' 'reshape.R'
-        'statistics.R' 'utilities.R' 'zzz.R'
+        'detect.R' 'discard.R' 'keep.R' 'mathematics.R' 'replace.R'
+        'reshape.R' 'statistics.R' 'utilities.R' 'zzz.R'
 NeedsCompilation: no
-Packaged: 2023-01-18 07:36:46 UTC; nicolas
+Packaged: 2023-05-11 14:28:36 UTC; nicolas
 Author: Nicolas Frerebeau [aut, cre] (<https://orcid.org/0000-0001-5759-4944>,
     Université Bordeaux Montaigne),
   Brice Lebrun [ctb] (<https://orcid.org/0000-0001-7503-8685>, Université
     Bordeaux Montaigne)
 Repository: CRAN
-Date/Publication: 2023-01-18 09:00:15 UTC
+Date/Publication: 2023-05-11 14:50:02 UTC

@@ -332,8 +332,85 @@ setGeneric(
   valueClass = "data.frame"
 )
 
+# Mathematics ==================================================================
+#' Least Common Multiple
+#'
+#' Computes the lowest common multiple of the denominators of a set of
+#' fractions.
+#' @param x,y A [`numeric`] vector.
+#' @return A [`numeric`] vector.
+#' @author N. Frerebeau
+#' @docType methods
+#' @family mathematic functions
+#' @aliases math_lcm-method
+setGeneric(
+  name = "math_lcm",
+  def = function(x, y) standardGeneric("math_lcm")
+)
+
+#' Greatest Common Divisor
+#'
+#' Computes the greatest common divisor (GCD) of two integer using the Euclidean
+#' algorithm.
+#' @param x,y A [`numeric`] vector.
+#' @return A [`numeric`] vector.
+#' @author N. Frerebeau
+#' @docType methods
+#' @family mathematic functions
+#' @aliases math_gcd-method
+setGeneric(
+  name = "math_gcd",
+  def = function(x, y) standardGeneric("math_gcd")
+)
+
 # Statistics ===================================================================
-## Interval ====================================================================
+## Interval --------------------------------------------------------------------
+#' Highest Density Regions
+#'
+#' @param x A [`numeric`] vector giving the coordinates of the points where
+#'  the density is estimated.
+#' @param y A [`numeric`] vector giving the estimated density values.
+#'  If `y` is missing and `x` is a `numeric` vector, density estimates will be
+#'  computed from `x`.
+#' @param level A length-one [`numeric`] vector giving the confidence level.
+#' @param ... Further arguments to be passed to [stats::density()].
+#' @return
+#'  A three-columns `numeric` [`matrix`] giving the lower and upper boundaries
+#'  of the HPD interval and associated probabilities.
+#' @references
+#'  Hyndman, R. J. (1996). Computing and graphing highest density regions.
+#'  *American Statistician*, 50: 120-126. \doi{10.2307/2684423}.
+#' @example inst/examples/ex-interval.R
+#' @author N. Frerebeau
+#' @family summary statistics
+#' @docType methods
+#' @aliases interval_hdr-method
+setGeneric(
+  name = "interval_hdr",
+  def = function(x, y, ...) standardGeneric("interval_hdr")
+)
+
+#' Bayesian Credible Interval
+#'
+#' Computes the shortest credible interval within which an unobserved parameter
+#' value falls with a particular probability.
+#' @param x A [`numeric`] vector.
+#' @param level A length-one [`numeric`] vector giving the confidence level.
+#' @param ... Currently not used.
+#' @return
+#'  A three-columns `numeric` [`matrix`] giving the lower and upper boundaries
+#'  of the credible interval and associated probability.
+#' @example inst/examples/ex-interval.R
+#' @author N. Frerebeau
+#' @family summary statistics
+#' @docType methods
+#' @aliases interval_credible-method
+setGeneric(
+  name = "interval_credible",
+  def = function(x, ...) standardGeneric("interval_credible")
+)
+
+## Confidence ------------------------------------------------------------------
 #' Confidence Interval for a Mean
 #'
 #' Computes a confidence interval for a mean at a desired level of significance.
@@ -417,17 +494,17 @@ setGeneric(
 #'  `do`) as argument.
 #' @param ... Extra arguments to be passed to `do`.
 #' @return
-#'  If `f` is not `NULL`, `bootstrap()` returns the result of `f` applied to
-#'  the `n` values of `do`.
-#'
-#'  If `f` is `NULL`, `bootstrap()` returns a named `numeric` `vector` with the
-#'  following elements:
+#'  If `f` is `NULL` (the default), `bootstrap()` returns a named `numeric`
+#'  vector with the following elements:
 #'  \describe{
 #'   \item{`original`}{The observed value of `do` applied to `object`.}
 #'   \item{`mean`}{The bootstrap estimate of mean of `do`.}
 #'   \item{`bias`}{The bootstrap estimate of bias of `do`.}
 #'   \item{`error`}{he bootstrap estimate of standard error of `do`.}
 #'  }
+#'
+#'  If `f` is a `function`, `bootstrap()` returns the result of `f` applied to
+#'  the `n` values of `do`.
 #' @example inst/examples/ex-resample.R
 #' @author N. Frerebeau
 #' @docType methods
@@ -446,14 +523,20 @@ setGeneric(
 #' @param do A [`function`] that takes `object` as an argument and returns a
 #'  single numeric value.
 #' @param ... Extra arguments to be passed to `do`.
+#' @param f A [`function`] that takes a single numeric vector (the leave-one-out
+#'  values of `do`) as argument.
 #' @return
-#'  Returns a named `numeric` `vector` with the following elements:
+#'  If `f` is `NULL` (the default), `jackknife()` returns a named `numeric`
+#'  vector with the following elements:
 #'  \describe{
 #'   \item{`original`}{The observed value of `do` applied to `object`.}
 #'   \item{`mean`}{The jackknife estimate of mean of `do`.}
 #'   \item{`bias`}{The jackknife estimate of bias of `do`.}
 #'   \item{`error`}{he jackknife estimate of standard error of `do`.}
 #'  }
+#'
+#'  If `f` is a `function`, `jackknife()` returns the result of `f` applied to
+#'  the leave-one-out values of `do`.
 #' @example inst/examples/ex-resample.R
 #' @author N. Frerebeau
 #' @docType methods
