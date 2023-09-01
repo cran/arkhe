@@ -40,6 +40,29 @@ values or discard rows/columns using a predicate function. In addition,
 it provides tools to check conditions and return informative error
 messages.
 
+    To cite arkhe in publications use:
+
+      Frerebeau N (2023). _arkhe: Tools for Cleaning Rectangular Data_.
+      Université Bordeaux Montaigne, Pessac, France.
+      doi:10.5281/zenodo.3526659 <https://doi.org/10.5281/zenodo.3526659>,
+      R package version 1.3.0, <https://packages.tesselle.org/arkhe/>.
+
+    Une entrée BibTeX pour les utilisateurs LaTeX est
+
+      @Manual{,
+        author = {Nicolas Frerebeau},
+        title = {{arkhe: Tools for Cleaning Rectangular Data}},
+        year = {2023},
+        organization = {Université Bordeaux Montaigne},
+        address = {Pessac, France},
+        note = {R package version 1.3.0},
+        url = {https://packages.tesselle.org/arkhe/},
+        doi = {10.5281/zenodo.3526659},
+      }
+
+    This package is a part of the tesselle project
+    <https://www.tesselle.org>.
+
 ## Installation
 
 You can install the released version of **arkhe** from
@@ -70,49 +93,50 @@ k <- sample(1:25, 3, FALSE)
 X[k] <- NA
 X
 #>      [,1] [,2] [,3] [,4] [,5]
-#> [1,]    2    5   NA    6   NA
-#> [2,]    4    1    5    2    5
-#> [3,]    2    6   NA    6   10
-#> [4,]    1    7    6    5    6
-#> [5,]    6    1    8    8    6
+#> [1,]    5    8   NA    3    5
+#> [2,]    9    7    8    4    2
+#> [3,]    4   10    7   NA    2
+#> [4,]   NA    5    5    4    3
+#> [5,]    7    9    9    8    1
 
 ## Count missing values in rows
 count(X, f = is.na, margin = 1)
-#> [1] 2 0 1 0 0
+#> [1] 1 0 1 1 0
 ## Count non-missing values in columns
 count(X, f = is.na, margin = 2, negate = TRUE)
-#> [1] 5 5 3 5 4
+#> V1 V2 V3 V4 V5 
+#>  4  5  4  4  5
 
 ## Find row with NA
 detect(X, f = is.na, margin = 1)
-#> [1]  TRUE FALSE  TRUE FALSE FALSE
+#> [1]  TRUE FALSE  TRUE  TRUE FALSE
 ## Find column without any NA
 detect(X, f = is.na, margin = 2, negate = TRUE, all = TRUE)
-#> [1]  TRUE  TRUE FALSE  TRUE FALSE
+#>    V1    V2    V3    V4    V5 
+#> FALSE  TRUE FALSE FALSE  TRUE
 
 ## Remove row with any NA
 discard(X, f = is.na, margin = 1, all = FALSE)
 #>      [,1] [,2] [,3] [,4] [,5]
-#> [1,]    4    1    5    2    5
-#> [2,]    1    7    6    5    6
-#> [3,]    6    1    8    8    6
+#> [1,]    9    7    8    4    2
+#> [2,]    7    9    9    8    1
 ## Remove column with any NA
 discard(X, f = is.na, margin = 2, all = FALSE)
-#>      [,1] [,2] [,3]
-#> [1,]    2    5    6
-#> [2,]    4    1    2
-#> [3,]    2    6    6
-#> [4,]    1    7    5
-#> [5,]    6    1    8
+#>      [,1] [,2]
+#> [1,]    8    5
+#> [2,]    7    2
+#> [3,]   10    2
+#> [4,]    5    3
+#> [5,]    9    1
 
 ## Replace NA with zeros
 replace_NA(X, value = 0)
 #>      [,1] [,2] [,3] [,4] [,5]
-#> [1,]    2    5    0    6    0
-#> [2,]    4    1    5    2    5
-#> [3,]    2    6    0    6   10
-#> [4,]    1    7    6    5    6
-#> [5,]    6    1    8    8    6
+#> [1,]    5    8    0    3    5
+#> [2,]    9    7    8    4    2
+#> [3,]    4   10    7    0    2
+#> [4,]    0    5    5    4    3
+#> [5,]    7    9    9    8    1
 ```
 
 ## Contributing

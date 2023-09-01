@@ -8,32 +8,54 @@
 \alias{keep_cols-method}
 \alias{keep_rows}
 \alias{keep_rows-method}
-\alias{keep,ANY,function-method}
-\alias{keep_rows,ANY,function-method}
-\alias{keep_cols,ANY,function-method}
-\title{Keep rows/columns using a predicate}
+\alias{keep,ANY-method}
+\alias{keep_rows,ANY-method}
+\alias{keep_cols,ANY-method}
+\title{Keep Rows/Columns Using a Predicate}
 \usage{
-keep(x, f, ...)
+keep(x, ...)
 
-keep_cols(x, f, ...)
+keep_cols(x, ...)
 
-keep_rows(x, f, ...)
+keep_rows(x, ...)
 
-\S4method{keep}{ANY,`function`}(x, f, margin = 1, negate = FALSE, all = FALSE)
+\S4method{keep}{ANY}(
+  x,
+  f,
+  margin = 1,
+  negate = FALSE,
+  all = FALSE,
+  verbose = getOption("arkhe.verbose"),
+  ...
+)
 
-\S4method{keep_rows}{ANY,`function`}(x, f, negate = FALSE, all = FALSE)
+\S4method{keep_rows}{ANY}(
+  x,
+  f,
+  negate = FALSE,
+  all = FALSE,
+  verbose = getOption("arkhe.verbose"),
+  ...
+)
 
-\S4method{keep_cols}{ANY,`function`}(x, f, negate = FALSE, all = FALSE)
+\S4method{keep_cols}{ANY}(
+  x,
+  f,
+  negate = FALSE,
+  all = FALSE,
+  verbose = getOption("arkhe.verbose"),
+  ...
+)
 }
 \arguments{
-\item{x}{An object (should be a \code{\link{matrix}} or a \code{\link{data.frame}}).}
+\item{x}{An \R object (should be a \code{\link{matrix}} or a \code{\link{data.frame}}).}
+
+\item{...}{Further arguments to be passed to \code{f}.}
 
 \item{f}{A predicate \code{\link{function}}.}
 
-\item{...}{Currently not used.}
-
-\item{margin}{A vector giving the subscripts which the function will be
-applied over (\code{1} indicates rows, \code{2} indicates columns).}
+\item{margin}{A length-one \code{\link{numeric}} vector giving the subscripts which the
+function will be applied over (\code{1} indicates rows, \code{2} indicates columns).}
 
 \item{negate}{A \code{\link{logical}} scalar: should the negation of \code{f} be used
 instead of \code{f}?}
@@ -42,12 +64,15 @@ instead of \code{f}?}
 values all meet the condition defined by \code{f} are considered. If \code{FALSE}
 (the default), only rows/columns where at least one value validates the
 condition defined by \code{f} are considered.}
+
+\item{verbose}{A \code{\link{logical}} scalar: should \R report extra information
+on progress?}
 }
 \description{
 Keeps rows/columns in an array-like object using a predicate function.
 }
 \examples{
-## Create a count data matrix
+## Create a data matrix
 X <- matrix(sample(1:10, 25, TRUE), nrow = 5, ncol = 5)
 
 ## Add NA
@@ -55,28 +80,10 @@ k <- sample(1:25, 3, FALSE)
 X[k] <- NA
 X
 
-## Count missing values in rows
-count(X, f = is.na, margin = 1)
-## Count non-missing values in columns
-count(X, f = is.na, margin = 2, negate = TRUE)
-
-## Find row with NA
-detect(X, f = is.na, margin = 1)
-## Find column without any NA
-detect(X, f = is.na, margin = 2, negate = TRUE, all = TRUE)
-
 ## Keep row without any NA
 keep(X, f = is.na, margin = 1, negate = TRUE, all = TRUE)
 ## Keep row without any NA
 keep(X, f = is.na, margin = 2, negate = TRUE, all = TRUE)
-
-## Remove row with any NA
-discard(X, f = is.na, margin = 1, all = FALSE)
-## Remove column with any NA
-discard(X, f = is.na, margin = 2, all = FALSE)
-
-## Replace NA with zeros
-replace_NA(X, value = 0)
 }
 \seealso{
 Other data cleaning tools: 
@@ -84,8 +91,10 @@ Other data cleaning tools:
 \code{\link{count}()},
 \code{\link{detect}()},
 \code{\link{discard}()},
+\code{\link{empty}},
 \code{\link{infinite}},
 \code{\link{missing}},
+\code{\link{remove_constant}()},
 \code{\link{zero}}
 }
 \author{

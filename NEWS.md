@@ -1,3 +1,16 @@
+# arkhe 1.3.0
+## New classes and methods
+* Add `remove_constant()` to remove constant columns.
+* Add `remove_empty()` to remove empty strings in a `matrix`-like object.
+* Add `replace_empty()` to replace empty strings in a `matrix`-like object.
+
+## Bugfixes & changes
+* Remove deprecated methods.
+* Deprecate `to_long()` and `wide_to_long()`.
+
+## Internals
+* Use **tinytest** instead of **testthat**.
+
 # arkhe 1.2.0
 ## New classes and methods
 * Add `math_lcm()` and `math_gcd()` to compute the lowest common multiple and the greatest common divisor.

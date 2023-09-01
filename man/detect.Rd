@@ -4,22 +4,22 @@
 \name{detect}
 \alias{detect}
 \alias{detect-method}
-\alias{detect,ANY,function-method}
-\title{Find rows/columns using a predicate}
+\alias{detect,ANY-method}
+\title{Find Rows/Columns Using a Predicate}
 \usage{
-detect(x, f, ...)
+detect(x, ...)
 
-\S4method{detect}{ANY,`function`}(x, f, margin = 1, negate = FALSE, all = FALSE)
+\S4method{detect}{ANY}(x, f, margin = 1, negate = FALSE, all = FALSE, ...)
 }
 \arguments{
-\item{x}{An object (should be a \code{\link{matrix}} or a \code{\link{data.frame}}).}
+\item{x}{An \R object (should be a \code{\link{matrix}} or a \code{\link{data.frame}}).}
+
+\item{...}{Further arguments to be passed to \code{f}.}
 
 \item{f}{A predicate \code{\link{function}}.}
 
-\item{...}{Currently not used.}
-
-\item{margin}{A vector giving the subscripts which the function will be
-applied over (\code{1} indicates rows, \code{2} indicates columns).}
+\item{margin}{A length-one \code{\link{numeric}} vector giving the subscripts which the
+function will be applied over (\code{1} indicates rows, \code{2} indicates columns).}
 
 \item{negate}{A \code{\link{logical}} scalar: should the negation of \code{f} be used
 instead of \code{f}?}
@@ -36,7 +36,7 @@ A \code{\link{logical}} vector.
 Finds rows/columns in an array-like object using a predicate function.
 }
 \examples{
-## Create a count data matrix
+## Create a data matrix
 X <- matrix(sample(1:10, 25, TRUE), nrow = 5, ncol = 5)
 
 ## Add NA
@@ -44,37 +44,21 @@ k <- sample(1:25, 3, FALSE)
 X[k] <- NA
 X
 
-## Count missing values in rows
-count(X, f = is.na, margin = 1)
-## Count non-missing values in columns
-count(X, f = is.na, margin = 2, negate = TRUE)
-
 ## Find row with NA
 detect(X, f = is.na, margin = 1)
 ## Find column without any NA
 detect(X, f = is.na, margin = 2, negate = TRUE, all = TRUE)
-
-## Keep row without any NA
-keep(X, f = is.na, margin = 1, negate = TRUE, all = TRUE)
-## Keep row without any NA
-keep(X, f = is.na, margin = 2, negate = TRUE, all = TRUE)
-
-## Remove row with any NA
-discard(X, f = is.na, margin = 1, all = FALSE)
-## Remove column with any NA
-discard(X, f = is.na, margin = 2, all = FALSE)
-
-## Replace NA with zeros
-replace_NA(X, value = 0)
 }
 \seealso{
 Other data cleaning tools: 
 \code{\link{compact}()},
 \code{\link{count}()},
 \code{\link{discard}()},
+\code{\link{empty}},
 \code{\link{infinite}},
 \code{\link{keep}()},
 \code{\link{missing}},
+\code{\link{remove_constant}()},
 \code{\link{zero}}
 }
 \author{

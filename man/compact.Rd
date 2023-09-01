@@ -11,7 +11,7 @@
 \alias{compact,ANY-method}
 \alias{compact_cols,ANY-method}
 \alias{compact_rows,ANY-method}
-\title{Remove empty rows/columns}
+\title{Remove Empty Rows/Columns}
 \usage{
 compact(x, ...)
 
@@ -26,12 +26,12 @@ compact_rows(x, ...)
 \S4method{compact_rows}{ANY}(x)
 }
 \arguments{
-\item{x}{An object (should be a \code{\link{matrix}} or a \code{\link{data.frame}}).}
+\item{x}{An \R object (should be a \code{\link{matrix}} or a \code{\link{data.frame}}).}
 
 \item{...}{Currently not used.}
 
-\item{margin}{A vector giving the subscripts which the function will be
-applied over (\code{1} indicates rows, \code{2} indicates columns).}
+\item{margin}{A length-one \code{\link{numeric}} vector giving the subscripts which the
+function will be applied over (\code{1} indicates rows, \code{2} indicates columns).}
 }
 \description{
 Removes empty rows/columns in an array-like object using a predicate
@@ -42,45 +42,25 @@ A row/column is empty if it contains only \code{NA}, zeros (if of type \code{num
 or zero length character strings (if of type \code{character}).
 }
 \examples{
-## Create a count data matrix
-X <- matrix(sample(1:10, 25, TRUE), nrow = 5, ncol = 5)
-
-## Add NA
-k <- sample(1:25, 3, FALSE)
-X[k] <- NA
+## Create a data.frame
+X <- data.frame(A = 0, B = 1:5, C = 6, D = "", F = letters[1:5])
 X
 
-## Count missing values in rows
-count(X, f = is.na, margin = 1)
-## Count non-missing values in columns
-count(X, f = is.na, margin = 2, negate = TRUE)
-
-## Find row with NA
-detect(X, f = is.na, margin = 1)
-## Find column without any NA
-detect(X, f = is.na, margin = 2, negate = TRUE, all = TRUE)
-
-## Keep row without any NA
-keep(X, f = is.na, margin = 1, negate = TRUE, all = TRUE)
-## Keep row without any NA
-keep(X, f = is.na, margin = 2, negate = TRUE, all = TRUE)
-
-## Remove row with any NA
-discard(X, f = is.na, margin = 1, all = FALSE)
-## Remove column with any NA
-discard(X, f = is.na, margin = 2, all = FALSE)
-
-## Replace NA with zeros
-replace_NA(X, value = 0)
+## Remove empty columns
+compact(X, margin = 2)
 }
 \seealso{
+\code{\link[=remove_NA]{remove_NA()}}, \code{\link[=remove_zero]{remove_zero()}}, \code{\link[=remove_empty]{remove_empty()}}
+
 Other data cleaning tools: 
 \code{\link{count}()},
 \code{\link{detect}()},
 \code{\link{discard}()},
+\code{\link{empty}},
 \code{\link{infinite}},
 \code{\link{keep}()},
 \code{\link{missing}},
+\code{\link{remove_constant}()},
 \code{\link{zero}}
 }
 \author{
