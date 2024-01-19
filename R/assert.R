@@ -2,22 +2,41 @@
 #' @include predicates.R
 NULL
 
+#' Validate a Condition
+#'
+#' @param expr An object to be evaluated.
+#' @return
+#'  Returns `NULL` on success, otherwise returns the error as a string.
+#' @author N. Frerebeau
+#' @family validation methods
+#' @name validate
+#' @rdname validate
+#' @export
+validate <- function(expr) {
+  cnd <- catch_message(eval(expr))
+  if (has_length(cnd)) return(cnd)
+  NULL
+}
+
+# Packages =====================================================================
 #' Check the Availability of a Package
 #'
 #' @param x A [`character`] vector naming the packages to check.
 #' @param ask A [`logical`] scalar: should the user be asked to select packages
 #'  before they are downloaded and installed?
 #' @details
-#'  `needs()` is designed for use inside other functions in your own package
-#'  to check for the availability of a suggested package.
+#'  `assert_package()` is designed for use inside other functions in your own
+#'  package to check for the availability of a suggested package.
 #'
 #'  If the required packages are not available and \R is running interactively,
 #'  the user will be asked to install the packages.
+#'
+#'  `needs()` is an alias for `assert_package()`.
 #' @return Invisibly returns `NULL`.
 #' @family validation methods
 #' @author N. Frerebeau
 #' @export
-needs <- function(x, ask = TRUE) {
+assert_package <- function(x, ask = TRUE) {
   ok <- vapply(X = x, FUN = requireNamespace, FUN.VALUE = logical(1),
                quietly = TRUE)
 
@@ -48,21 +67,9 @@ needs <- function(x, ask = TRUE) {
   invisible(NULL)
 }
 
-#' Validate a Condition
-#'
-#' @param expr An object to be evaluated.
-#' @return
-#'  Returns `NULL` on success, otherwise returns the error as a string.
-#' @author N. Frerebeau
-#' @family validation methods
-#' @name validate
-#' @rdname validate
 #' @export
-validate <- function(expr) {
-  cnd <- catch_message(eval(expr))
-  if (has_length(cnd)) return(cnd)
-  NULL
-}
+#' @rdname assert_package
+needs <- assert_package
 
 # Types ========================================================================
 #' Check Data Types
@@ -75,12 +82,7 @@ validate <- function(expr) {
 #'  Throws an error, if any, and returns `x` invisibly otherwise.
 #' @author N. Frerebeau
 #' @family validation methods
-#' @name check-type
-#' @rdname check-type
-NULL
-
 #' @export
-#' @rdname check-type
 assert_type <- function(x, expected) {
   arg <- deparse(substitute(x))
   predicate <- switch(
@@ -103,7 +105,7 @@ assert_type <- function(x, expected) {
 }
 
 #' @export
-#' @rdname check-type
+#' @rdname assert_type
 assert_scalar <- function(x, expected) {
   arg <- deparse(substitute(x))
   predicate <- switch(
@@ -126,7 +128,7 @@ assert_scalar <- function(x, expected) {
 }
 
 #' @export
-#' @rdname check-type
+#' @rdname assert_type
 assert_function <- function(x) {
   arg <- deparse(substitute(x))
   if (!is.function(x)) {
@@ -137,7 +139,7 @@ assert_function <- function(x) {
 }
 
 # Attributes ===================================================================
-#' Check Object Attributes
+#' Check Object Length/Dimensions
 #'
 #' @param x An object to be checked.
 #' @param expected An appropriate expected value.
@@ -146,38 +148,11 @@ assert_function <- function(x) {
 #'  Throws an error, if any, and returns `x` invisibly otherwise.
 #' @author N. Frerebeau
 #' @family validation methods
-#' @name check-attribute
-#' @rdname check-attribute
-NULL
-
 #' @export
-#' @rdname check-attribute
-assert_empty <- function(x) {
-  arg <- deparse(substitute(x))
-  if (!is_empty(x)) {
-    msg <- sprintf("%s must be empty.", sQuote(arg))
-    throw_error("error_bad_dimensions", msg)
-  }
-  invisible(x)
-}
-
-#' @export
-#' @rdname check-attribute
-assert_filled <- function(x) {
-  arg <- deparse(substitute(x))
-  if (is_empty(x)) {
-    msg <- sprintf("%s must not be empty.", sQuote(arg))
-    throw_error("error_bad_dimensions", msg)
-  }
-  invisible(x)
-}
-
-#' @export
-#' @rdname check-attribute
 assert_length <- function(x, expected, empty = FALSE) {
   arg <- deparse(substitute(x))
   if (!(empty & is_empty(x)) && !has_length(x, n = expected)) {
-    msg <- sprintf("%s must be of length %d; not %s.", sQuote(arg),
+    msg <- sprintf("%s must be of length %d; not %d.", sQuote(arg),
                    expected, length(x))
     throw_error("error_bad_length", msg)
   }
@@ -185,7 +160,7 @@ assert_length <- function(x, expected, empty = FALSE) {
 }
 
 #' @export
-#' @rdname check-attribute
+#' @rdname assert_length
 assert_lengths <- function(x, expected) {
   arg <- deparse(substitute(x))
   n <- lengths(x)
@@ -199,7 +174,29 @@ assert_lengths <- function(x, expected) {
 }
 
 #' @export
-#' @rdname check-attribute
+#' @rdname assert_length
+assert_empty <- function(x) {
+  arg <- deparse(substitute(x))
+  if (!is_empty(x)) {
+    msg <- sprintf("%s must be empty.", sQuote(arg))
+    throw_error("error_bad_dimensions", msg)
+  }
+  invisible(x)
+}
+
+#' @export
+#' @rdname assert_length
+assert_filled <- function(x) {
+  arg <- deparse(substitute(x))
+  if (is_empty(x)) {
+    msg <- sprintf("%s must not be empty.", sQuote(arg))
+    throw_error("error_bad_dimensions", msg)
+  }
+  invisible(x)
+}
+
+#' @export
+#' @rdname assert_length
 assert_dimensions <- function(x, expected) {
   arg <- deparse(substitute(x))
   n <- dim(x)
@@ -212,8 +209,15 @@ assert_dimensions <- function(x, expected) {
   invisible(x)
 }
 
+#' Check Object Names
+#'
+#' @param x An object to be checked.
+#' @param expected An appropriate expected value.
+#' @return
+#'  Throws an error, if any, and returns `x` invisibly otherwise.
+#' @author N. Frerebeau
+#' @family validation methods
 #' @export
-#' @rdname check-attribute
 assert_names <- function(x, expected) {
   arg <- deparse(substitute(x))
   if (!has_names(x, names = expected)) {
@@ -229,7 +233,7 @@ assert_names <- function(x, expected) {
 }
 
 #' @export
-#' @rdname check-attribute
+#' @rdname assert_names
 assert_dimnames <- function(x, expected) {
   arg <- deparse(substitute(x))
   if (!identical(dimnames(x), expected)) {
@@ -240,7 +244,7 @@ assert_dimnames <- function(x, expected) {
 }
 
 #' @export
-#' @rdname check-attribute
+#' @rdname assert_names
 assert_rownames <- function(x, expected) {
   arg <- deparse(substitute(x))
   if (!identical(rownames(x), expected)) {
@@ -251,7 +255,7 @@ assert_rownames <- function(x, expected) {
 }
 
 #' @export
-#' @rdname check-attribute
+#' @rdname assert_names
 assert_colnames <- function(x, expected) {
   arg <- deparse(substitute(x))
   if (!identical(colnames(x), expected)) {
@@ -272,12 +276,12 @@ assert_colnames <- function(x, expected) {
 #'  Throws an error, if any, and returns `x` invisibly otherwise.
 #' @author N. Frerebeau
 #' @family validation methods
-#' @name check-data
-#' @rdname check-data
+#' @name assert_data
+#' @rdname assert_data
 NULL
 
 #' @export
-#' @rdname check-data
+#' @rdname assert_data
 assert_missing <- function(x) {
   arg <- deparse(substitute(x))
   n <- sum(is.na(x))
@@ -290,7 +294,7 @@ assert_missing <- function(x) {
 }
 
 #' @export
-#' @rdname check-data
+#' @rdname assert_data
 assert_infinite <- function(x) {
   arg <- deparse(substitute(x))
   n <- sum(is.infinite(x))
@@ -303,7 +307,7 @@ assert_infinite <- function(x) {
 }
 
 #' @export
-#' @rdname check-data
+#' @rdname assert_data
 assert_unique <- function(x) {
   arg <- deparse(substitute(x))
   if (has_duplicates(x)) {
@@ -324,12 +328,12 @@ assert_unique <- function(x) {
 #'  Throws an error, if any, and returns `x` invisibly otherwise.
 #' @author N. Frerebeau
 #' @family validation methods
-#' @name check-numeric
-#' @rdname check-numeric
+#' @name assert_numeric
+#' @rdname assert_numeric
 NULL
 
 #' @export
-#' @rdname check-numeric
+#' @rdname assert_numeric
 assert_count <- function(x, na.rm = FALSE, ...) {
   arg <- deparse(substitute(x))
   if (!all(is_whole(x, ...), na.rm = na.rm)) {
@@ -340,11 +344,11 @@ assert_count <- function(x, na.rm = FALSE, ...) {
 }
 
 #' @export
-#' @rdname check-numeric
+#' @rdname assert_numeric
 assert_whole <- assert_count
 
 #' @export
-#' @rdname check-numeric
+#' @rdname assert_numeric
 assert_positive <- function(x, na.rm = FALSE, ...) {
   arg <- deparse(substitute(x))
   if (!all(is_positive(x, ...), na.rm = na.rm)) {
@@ -355,7 +359,7 @@ assert_positive <- function(x, na.rm = FALSE, ...) {
 }
 
 #' @export
-#' @rdname check-numeric
+#' @rdname assert_numeric
 assert_negative <- function(x, na.rm = FALSE, ...) {
   arg <- deparse(substitute(x))
   if (!all(is_negative(x, ...), na.rm = na.rm)) {
@@ -366,7 +370,7 @@ assert_negative <- function(x, na.rm = FALSE, ...) {
 }
 
 #' @export
-#' @rdname check-numeric
+#' @rdname assert_numeric
 assert_odd <- function(x, na.rm = FALSE, ...) {
   arg <- deparse(substitute(x))
   if (!all(is_odd(x, ...), na.rm = na.rm)) {
@@ -377,7 +381,7 @@ assert_odd <- function(x, na.rm = FALSE, ...) {
 }
 
 #' @export
-#' @rdname check-numeric
+#' @rdname assert_numeric
 assert_even <- function(x, na.rm = FALSE, ...) {
   arg <- deparse(substitute(x))
   if (!all(is_even(x, ...), na.rm = na.rm)) {
@@ -395,12 +399,7 @@ assert_even <- function(x, na.rm = FALSE, ...) {
 #'  Throws an error, if any, and returns `x` invisibly otherwise.
 #' @author N. Frerebeau
 #' @family validation methods
-#' @name check-numeric-trend
-#' @rdname check-numeric-trend
-NULL
-
 #' @export
-#' @rdname check-numeric-trend
 assert_constant <- function(x, ...) {
   arg <- deparse(substitute(x))
   if (!is_constant(x, ...)) {
@@ -411,7 +410,7 @@ assert_constant <- function(x, ...) {
 }
 
 #' @export
-#' @rdname check-numeric-trend
+#' @rdname assert_constant
 assert_decreasing <- function(x, ...) {
   arg <- deparse(substitute(x))
   if (!is_decreasing(x, ...)) {
@@ -422,7 +421,7 @@ assert_decreasing <- function(x, ...) {
 }
 
 #' @export
-#' @rdname check-numeric-trend
+#' @rdname assert_constant
 assert_increasing <- function(x, ...) {
   arg <- deparse(substitute(x))
   if (!is_increasing(x, ...)) {
@@ -440,12 +439,7 @@ assert_increasing <- function(x, ...) {
 #'  Throws an error, if any, and returns `x` invisibly otherwise.
 #' @author N. Frerebeau
 #' @family validation methods
-#' @name check-numeric-comparison
-#' @rdname check-numeric-comparison
-NULL
-
 #' @export
-#' @rdname check-numeric-comparison
 assert_lower <- function(x, y, ...) {
   arg_x <- deparse(substitute(x))
   arg_y <- deparse(substitute(y))
@@ -457,7 +451,7 @@ assert_lower <- function(x, y, ...) {
 }
 
 #' @export
-#' @rdname check-numeric-comparison
+#' @rdname assert_lower
 assert_greater <- function(x, y, ...) {
   arg_x <- deparse(substitute(x))
   arg_y <- deparse(substitute(y))
@@ -475,28 +469,23 @@ assert_greater <- function(x, y, ...) {
 #' @return Throw an error, if any, and returns `x` invisibly otherwise.
 #' @author N. Frerebeau
 #' @family validation methods
-#' @name check-matrix
-#' @rdname check-matrix
-NULL
-
 #' @export
-#' @rdname check-matrix
-assert_symmetric <- function(x) {
+assert_square <- function(x) {
   arg <- deparse(substitute(x))
-  if (!is_symmetric(x)) {
-    msg <- sprintf("%s must be a symmetric matrix.", sQuote(arg))
+  if (!is_square(x)) {
+    k <- paste0(dim(x), collapse = " x ")
+    msg <- sprintf("%s must be a square matrix, not %s.", sQuote(arg), k)
     throw_error("error_bad_matrix", msg)
   }
   invisible(x)
 }
 
 #' @export
-#' @rdname check-matrix
-assert_square <- function(x) {
+#' @rdname assert_square
+assert_symmetric <- function(x) {
   arg <- deparse(substitute(x))
-  if (!is_square(x)) {
-    k <- paste0(dim(x), collapse = " x ")
-    msg <- sprintf("%s must be a sqaure matrix, not %s.", sQuote(arg), k)
+  if (!is_symmetric(x)) {
+    msg <- sprintf("%s must be a symmetric matrix.", sQuote(arg))
     throw_error("error_bad_matrix", msg)
   }
   invisible(x)
@@ -510,13 +499,8 @@ assert_square <- function(x) {
 # @return Throw an error, if any.
 # @author N. Frerebeau
 # @family validation methods
-# @name check-graph
-# @rdname check-graph
 # @keywords internal
-NULL
-
 # @export
-# @rdname check-graph
 # assert_dag <- function(x) {
 #   arg <- deparse(substitute(x))
 #   if (!is_dag(x)) {

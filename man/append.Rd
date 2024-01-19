@@ -45,10 +45,17 @@ X <- data.frame(
 (Z <- append_rownames(Y))
 }
 \seealso{
-Other transformation tools: 
-\code{\link{assign}()}
+Other data preparation tools: 
+\code{\link{assign}()},
+\code{\link{compact}()},
+\code{\link{count}()},
+\code{\link{detect}()},
+\code{\link{discard}()},
+\code{\link{get}()},
+\code{\link{keep}()},
+\code{\link{seek}()}
 }
 \author{
 N. Frerebeau
 }
-\concept{transformation tools}
+\concept{data preparation tools}

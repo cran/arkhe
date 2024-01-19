@@ -1,3 +1,16 @@
+# arkhe 1.5.0
+## New classes and methods
+* Add `palette_color_continuous()` and `palette_color_discrete()` for color mapping.
+* Add `palette_shape()` and `palette_size()` for symbol shape and size mapping.
+* Add `clean_whitespace()` to remove leading/trailing Whitespace.
+* Add `seek_*()` and `get_*()` to find and get rows/columns by names in a `data.frame`.
+
+## Enhancements
+* `compact()` and `remove_*()` gained a new `verbose` argument to report extra information on progress.
+
+## Bugfixes & changes
+* Rename `needs()` to `assert_package()`.
+
 # arkhe 1.4.0
 ## New classes and methods
 * Add `%||%` to replace `NULL` with a default value.

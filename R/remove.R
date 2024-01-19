@@ -4,49 +4,55 @@ NULL
 
 # Missing values ===============================================================
 #' @export
-#' @rdname missing
+#' @rdname remove_NA
 #' @aliases remove_NA,ANY-method
 setMethod(
   f = "remove_NA",
   signature = c(x = "ANY"),
-  definition = function(x, margin = 1, all = FALSE) {
-    discard(x, f = is.na, margin = margin, all = all)
+  definition = function(x, margin = 1, all = FALSE,
+                        verbose = getOption("arkhe.verbose")) {
+    discard(x, f = is.na, margin = margin, all = all, verbose = verbose)
   }
 )
 
 # Infinite values ==============================================================
 #' @export
-#' @rdname infinite
+#' @rdname remove_Inf
 #' @aliases remove_Inf,ANY-method
 setMethod(
   f = "remove_Inf",
   signature = c(x = "ANY"),
-  definition = function(x, margin = 1, all = FALSE) {
-    discard(x, f = is.infinite, margin = margin, all = all)
+  definition = function(x, margin = 1, all = FALSE,
+                        verbose = getOption("arkhe.verbose")) {
+    discard(x, f = is.infinite, margin = margin, all = all, verbose = verbose)
   }
 )
 
 # Zeros ========================================================================
 #' @export
-#' @rdname zero
+#' @rdname remove_zero
 #' @aliases remove_zero,ANY-method
 setMethod(
   f = "remove_zero",
   signature = c(x = "ANY"),
-  definition = function(x, margin = 1, all = FALSE) {
-    discard(x, f = is_zero_numeric, margin = margin, all = all, na.rm = TRUE)
+  definition = function(x, margin = 1, all = FALSE,
+                        verbose = getOption("arkhe.verbose")) {
+    discard(x, f = is_zero_numeric, margin = margin,
+            all = all, na.rm = TRUE, verbose = verbose)
   }
 )
 
 # Empty string =================================================================
 #' @export
-#' @rdname empty
+#' @rdname remove_empty
 #' @aliases remove_empty,ANY-method
 setMethod(
   f = "remove_empty",
   signature = c(x = "ANY"),
-  definition = function(x, margin = 1, all = FALSE) {
-    discard(x, f = is_empty_string, margin = margin, all = all, na.rm = TRUE)
+  definition = function(x, margin = 1, all = FALSE,
+                        verbose = getOption("arkhe.verbose")) {
+    discard(x, f = is_empty_string, margin = margin,
+            all = all, na.rm = TRUE, verbose = verbose)
   }
 )
 
@@ -57,7 +63,8 @@ setMethod(
 setMethod(
   f = "remove_constant",
   signature = c(x = "ANY"),
-  definition = function(x, na.rm = FALSE) {
-    discard(x, f = function(x) { is_unique(x, na.rm) }, margin = 2, all = FALSE)
+  definition = function(x, na.rm = FALSE, verbose = getOption("arkhe.verbose")) {
+    discard(x, f = function(x) { is_unique(x, na.rm) },
+            margin = 2, all = FALSE, verbose = verbose)
   }
 )

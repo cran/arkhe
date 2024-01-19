@@ -19,11 +19,11 @@ compact_cols(x, ...)
 
 compact_rows(x, ...)
 
-\S4method{compact}{ANY}(x, margin = 1, na.rm = FALSE)
+\S4method{compact}{ANY}(x, margin = 1, na.rm = FALSE, verbose = getOption("arkhe.verbose"))
 
-\S4method{compact_cols}{ANY}(x, na.rm = FALSE)
+\S4method{compact_cols}{ANY}(x, na.rm = FALSE, verbose = getOption("arkhe.verbose"))
 
-\S4method{compact_rows}{ANY}(x, na.rm = FALSE)
+\S4method{compact_rows}{ANY}(x, na.rm = FALSE, verbose = getOption("arkhe.verbose"))
 }
 \arguments{
 \item{x}{An \R object (should be a \code{\link{matrix}} or a \code{\link{data.frame}}).}
@@ -35,6 +35,9 @@ function will be applied over (\code{1} indicates rows, \code{2} indicates colum
 
 \item{na.rm}{A \code{\link{logical}} scalar: should \code{NA} values be stripped before the
 computation proceeds?}
+
+\item{verbose}{A \code{\link{logical}} scalar: should \R report extra information
+on progress?}
 }
 \description{
 Removes empty rows/columns in an array-like object.
@@ -52,20 +55,17 @@ X
 compact(X, margin = 2)
 }
 \seealso{
-\code{\link[=remove_NA]{remove_NA()}}, \code{\link[=remove_zero]{remove_zero()}}, \code{\link[=remove_empty]{remove_empty()}}
-
-Other data cleaning tools: 
+Other data preparation tools: 
+\code{\link{append}()},
+\code{\link{assign}()},
 \code{\link{count}()},
 \code{\link{detect}()},
 \code{\link{discard}()},
-\code{\link{empty}},
-\code{\link{infinite}},
+\code{\link{get}()},
 \code{\link{keep}()},
-\code{\link{missing}},
-\code{\link{remove_constant}()},
-\code{\link{zero}}
+\code{\link{seek}()}
 }
 \author{
 N. Frerebeau
 }
-\concept{data cleaning tools}
+\concept{data preparation tools}

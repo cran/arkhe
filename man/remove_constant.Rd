@@ -9,7 +9,7 @@
 \usage{
 remove_constant(x, ...)
 
-\S4method{remove_constant}{ANY}(x, na.rm = FALSE)
+\S4method{remove_constant}{ANY}(x, na.rm = FALSE, verbose = getOption("arkhe.verbose"))
 }
 \arguments{
 \item{x}{An \R object (should be a \code{\link{matrix}} or a \code{\link{data.frame}}).}
@@ -18,6 +18,9 @@ remove_constant(x, ...)
 
 \item{na.rm}{A \code{\link{logical}} scalar: should \code{NA} values be stripped before the
 computation proceeds?}
+
+\item{verbose}{A \code{\link{logical}} scalar: should \R report extra information
+on progress?}
 }
 \description{
 Remove Constant Columns
@@ -36,15 +39,15 @@ remove_constant(X, na.rm = TRUE)
 }
 \seealso{
 Other data cleaning tools: 
-\code{\link{compact}()},
-\code{\link{count}()},
-\code{\link{detect}()},
-\code{\link{discard}()},
-\code{\link{empty}},
-\code{\link{infinite}},
-\code{\link{keep}()},
-\code{\link{missing}},
-\code{\link{zero}}
+\code{\link{clean_whitespace}()},
+\code{\link{remove_Inf}()},
+\code{\link{remove_NA}()},
+\code{\link{remove_empty}()},
+\code{\link{remove_zero}()},
+\code{\link{replace_Inf}()},
+\code{\link{replace_NA}()},
+\code{\link{replace_empty}()},
+\code{\link{replace_zero}()}
 }
 \author{
 N. Frerebeau

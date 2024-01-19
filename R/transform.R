@@ -1,4 +1,4 @@
-# SCALE
+# DATA TRANSFORMATION
 NULL
 
 #' Rescale Continuous Vector
@@ -9,7 +9,7 @@ NULL
 #' @param from A length-two [`numeric`] vector specifying the input range.
 #' @note For internal use only.
 #' @return A [`numeric`] vector.
-#' @family scales
+#' @family data transformation tools
 #' @export
 scale_range <- function(x, to = c(0, 1), from = range(x, finite = TRUE)) {
   (x - from[1L]) / diff(from) * diff(to) + to[1L]

@@ -51,18 +51,17 @@ count(X, f = is.na, margin = 1)
 count(X, f = is.na, margin = 2, negate = TRUE)
 }
 \seealso{
-Other data cleaning tools: 
+Other data preparation tools: 
+\code{\link{append}()},
+\code{\link{assign}()},
 \code{\link{compact}()},
 \code{\link{detect}()},
 \code{\link{discard}()},
-\code{\link{empty}},
-\code{\link{infinite}},
+\code{\link{get}()},
 \code{\link{keep}()},
-\code{\link{missing}},
-\code{\link{remove_constant}()},
-\code{\link{zero}}
+\code{\link{seek}()}
 }
 \author{
 N. Frerebeau
 }
-\concept{data cleaning tools}
+\concept{data preparation tools}
