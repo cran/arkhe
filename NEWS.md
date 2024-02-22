@@ -1,3 +1,8 @@
+# arkhe 1.6.0
+## New classes and methods
+* Add `describe()` to quickly describe a `matrix`-like object.
+* Add `sparsity()` to computes data sparsity (proportion of zeros).
+
 # arkhe 1.5.0
 ## New classes and methods
 * Add `palette_color_continuous()` and `palette_color_discrete()` for color mapping.
