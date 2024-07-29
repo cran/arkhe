@@ -1,3 +1,13 @@
+# arkhe 1.7.0
+## New classes and methods
+* Add `scale_midpoint` to rescale a continuous vector to have specified minimum, midpoint and maximum.
+
+## Internals
+* Reexport `%||%` from base on newer versions of R to avoid conflict messages.
+
+## Breaking changes
+* Move `palette_*()` functions to **khroma**.
+
 # arkhe 1.6.0
 ## New classes and methods
 * Add `describe()` to quickly describe a `matrix`-like object.
