@@ -6,7 +6,7 @@
 \alias{assert_function}
 \title{Check Data Types}
 \usage{
-assert_type(x, expected)
+assert_type(x, expected, allow_empty = TRUE, allow_null = FALSE)
 
 assert_scalar(x, expected)
 
@@ -18,6 +18,11 @@ assert_function(x)
 \item{expected}{A \code{\link{character}} string specifying the expected
 type. It must be one of "\code{list}", "\code{atomic}", "\code{vector}", "\code{numeric}",
 "\code{integer}", "\code{double}", "\code{character}" or "\code{logical}".}
+
+\item{allow_empty}{A \code{\link{logical}} scalar: should \link[=is_empty]{empty} object be
+allowed?}
+
+\item{allow_null}{A \code{\link{logical}} scalar: should \code{NULL} object be allowed?}
 }
 \value{
 Throws an error, if any, and returns \code{x} invisibly otherwise.
@@ -26,18 +31,21 @@ Throws an error, if any, and returns \code{x} invisibly otherwise.
 Check Data Types
 }
 \seealso{
-Other validation methods: 
+Other checking methods: 
 \code{\link{assert_constant}()},
-\code{\link{assert_data}},
+\code{\link{assert_dim}()},
+\code{\link{assert_empty}()},
+\code{\link{assert_infinite}()},
 \code{\link{assert_length}()},
 \code{\link{assert_lower}()},
+\code{\link{assert_missing}()},
 \code{\link{assert_names}()},
 \code{\link{assert_numeric}},
 \code{\link{assert_package}()},
 \code{\link{assert_square}()},
-\code{\link{validate}()}
+\code{\link{assert_unique}()}
 }
 \author{
 N. Frerebeau
 }
-\concept{validation methods}
+\concept{checking methods}

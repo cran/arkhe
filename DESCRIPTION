@@ -1,9 +1,9 @@
 Package: arkhe
 Title: Tools for Cleaning Rectangular Data
-Version: 1.7.0
+Version: 1.8.0
 Authors@R: c(
     person("Nicolas", "Frerebeau", , "nicolas.frerebeau@u-bordeaux-montaigne.fr", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0001-5759-4944", affiliation = "Université Bordeaux Montaigne")),
+           comment = c(ORCID = "0000-0001-5759-4944")),
     person("Brice", "Lebrun", , "brice.lebrun@u-bordeaux-montaigne.fr", role = "ctb",
            comment = c(ORCID = "0000-0001-7503-8685", "Logo designer")),
     person("Université Bordeaux Montaigne", role = "fnd"),
@@ -24,19 +24,19 @@ Imports: methods, stats, utils
 Suggests: tinytest
 Encoding: UTF-8
 RoxygenNote: 7.3.2
-Collate: 'AllGenerics.R' 'append.R' 'arkhe-deprecated.R'
-        'arkhe-internal.R' 'arkhe-package.R' 'predicates.R' 'assert.R'
+Config/potools/style: explicit
+Collate: 'AllGenerics.R' 'append.R' 'predicates.R' 'assert.R'
+        'arkhe-deprecated.R' 'arkhe-internal.R' 'arkhe-package.R'
         'assign.R' 'clean.R' 'compact.R' 'conditions.R' 'count.R'
         'describe.R' 'detect.R' 'discard.R' 'get.R' 'keep.R'
         'mathematics.R' 'remove.R' 'replace.R' 'scale.R' 'seek.R'
         'sparsity.R' 'statistics.R' 'utilities.R' 'zzz.R'
 NeedsCompilation: no
-Packaged: 2024-07-29 11:31:04 UTC; nicolas
-Author: Nicolas Frerebeau [aut, cre] (<https://orcid.org/0000-0001-5759-4944>,
-    Université Bordeaux Montaigne),
+Packaged: 2024-11-07 11:20:55 UTC; nicolas
+Author: Nicolas Frerebeau [aut, cre] (<https://orcid.org/0000-0001-5759-4944>),
   Brice Lebrun [ctb] (<https://orcid.org/0000-0001-7503-8685>, Logo
     designer),
   Université Bordeaux Montaigne [fnd],
   CNRS [fnd]
 Repository: CRAN
-Date/Publication: 2024-07-29 12:10:06 UTC
+Date/Publication: 2024-11-07 20:40:10 UTC

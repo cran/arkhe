@@ -8,11 +8,18 @@ cnd <- arkhe:::catch_conditions(needs("ABC123XYZ", ask = FALSE))
 expect_inherits(cnd[[1]], "error_missing_package")
 
 # Assert type ==================================================================
+cnd <- arkhe:::catch_conditions(assert_type(NULL, expected = "numeric"))
+expect_inherits(cnd[[1]], "error_bad_type")
+
 x <- numeric()
+cnd <- arkhe:::catch_conditions(assert_type(x, expected = "numeric", allow_empty = FALSE))
+expect_inherits(cnd[[1]], "error_bad_dimensions")
+
 cnd <- arkhe:::catch_conditions(assert_type(x, expected = "character"))
 expect_inherits(cnd[[1]], "error_bad_type")
 
 expect_identical(assert_type(x, expected = "numeric"), x)
+expect_null(assert_type(NULL, expected = "numeric", allow_null = TRUE))
 
 # Assert scalar ================================================================
 x <- numeric(3)
@@ -33,14 +40,14 @@ expect_identical(assert_function(mean), mean)
 
 # Assert object attributes =====================================================
 ## Length ----------------------------------------------------------------------
-cnd <- arkhe:::catch_conditions(assert_length(LETTERS, expected = 10, empty = FALSE))
+cnd <- arkhe:::catch_conditions(assert_length(LETTERS, expected = 10))
 expect_inherits(cnd[[1]], "error_bad_length")
-cnd <- arkhe:::catch_conditions(assert_length(LETTERS, expected = 10, empty = TRUE))
+cnd <- arkhe:::catch_conditions(assert_length(LETTERS, expected = 10, allow_empty = TRUE))
 expect_inherits(cnd[[1]], "error_bad_length")
-cnd <- arkhe:::catch_conditions(assert_length(numeric(0), expected = 10, empty = FALSE))
+cnd <- arkhe:::catch_conditions(assert_length(numeric(), expected = 10))
 expect_inherits(cnd[[1]], "error_bad_length")
 
-expect_equal(assert_length(numeric(0), expected = 10, empty = TRUE), numeric(0))
+expect_identical(assert_length(numeric(), expected = 10, allow_empty = TRUE), numeric())
 expect_identical(assert_length(LETTERS, expected = 26), LETTERS)
 
 ## Lengths ---------------------------------------------------------------------
@@ -61,10 +68,16 @@ expect_identical(assert_empty(k), k)
 
 ## Dimensions ------------------------------------------------------------------
 k <- matrix(1, nrow = 10, ncol = 5)
-cnd <- arkhe:::catch_conditions(assert_dimensions(k, expected = c(5, 10)))
+cnd <- arkhe:::catch_conditions(assert_dim(k, expected = c(5, 10)))
 expect_inherits(cnd[[1]], "error_bad_dimensions")
 
-expect_identical(assert_dimensions(k, expected = c(10, 5)), k)
+cnd <- arkhe:::catch_conditions(assert_nrow(k, expected = 5))
+expect_inherits(cnd[[1]], "error_bad_dimensions")
+
+cnd <- arkhe:::catch_conditions(assert_ncol(k, expected = 10))
+expect_inherits(cnd[[1]], "error_bad_dimensions")
+
+expect_identical(assert_dim(k, expected = c(10, 5)), k)
 
 ## Names -----------------------------------------------------------------------
 k <- vector(mode = "numeric", length = 10)
@@ -80,28 +93,25 @@ expect_inherits(cnd[[1]], "error_bad_names")
 
 expect_identical(assert_names(k, expected = LETTERS[1:10]), k)
 
-## Dimnames --------------------------------------------------------------------
+## Row/column names ------------------------------------------------------------
 k <- matrix(1, nrow = 3, ncol = 3)
 z <- list(LETTERS[1:3], LETTERS[4:6])
-cnd <- arkhe:::catch_conditions(assert_dimnames(k, expected = z))
+
+cnd <- arkhe:::catch_conditions(assert_rownames(k))
 expect_inherits(cnd[[1]], "error_bad_names")
 
 cnd <- arkhe:::catch_conditions(assert_rownames(k, expected = z[[1]]))
 expect_inherits(cnd[[1]], "error_bad_names")
 
+cnd <- arkhe:::catch_conditions(assert_colnames(k))
+expect_inherits(cnd[[1]], "error_bad_names")
+
 cnd <- arkhe:::catch_conditions(assert_colnames(k, expected = z[[2]]))
 expect_inherits(cnd[[1]], "error_bad_names")
 
-dimnames(k) <- list(NULL, letters[4:6])
-cnd <- arkhe:::catch_conditions(assert_dimnames(k, expected = z))
-expect_inherits(cnd[[1]], "error_bad_names")
-
-dimnames(k) <- list(letters[1:3], letters[4:6])
-cnd <- arkhe:::catch_conditions(assert_dimnames(k, expected = z))
-expect_inherits(cnd[[1]], "error_bad_names")
-
 dimnames(k) <- z
-expect_identical(assert_dimnames(k, expected = z), k)
+expect_identical(assert_rownames(k, expected = z[[1]]), k)
+expect_identical(assert_colnames(k, expected = z[[2]]), k)
 
 # Assert missing/infinite/duplicated values ====================================
 ## Missing ---------------------------------------------------------------------
