@@ -1,3 +1,10 @@
+# arkhe 1.9.0
+## Enhancements
+* Allow `NULL` or empty values in `assert_length()` and `assert_type()`.
+
+## Bugfixes & changes
+* `seek_rows()` to `seek_columns()` return `NULL` if there is nothing to look for.
+
 # arkhe 1.8.0
 ## New classes and methods
 * Add `append_column()` to add a named vector as a column in a `data.frame`.
@@ -27,7 +34,7 @@
 ## New classes and methods
 * Add `palette_color_continuous()` and `palette_color_discrete()` for color mapping.
 * Add `palette_shape()` and `palette_size()` for symbol shape and size mapping.
-* Add `clean_whitespace()` to remove leading/trailing Whitespace.
+* Add `clean_whitespace()` to remove leading/trailing white space.
 * Add `seek_*()` and `get_*()` to find and get rows/columns by names in a `data.frame`.
 
 ## Enhancements

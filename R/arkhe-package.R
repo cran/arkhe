@@ -2,15 +2,15 @@
 #'  \tabular{ll}{
 #'   **Package:** \tab arkhe \cr
 #'   **Type:** \tab Package \cr
-#'   **Version:** \tab 1.8.0 \cr
+#'   **Version:** \tab 1.9.0 \cr
 #'   **License:** \tab GPL-3 \cr
 #'   **Zenodo:** \tab \doi{10.5281/zenodo.3526659} \cr
 #'  }
 #'
 #' @section Package options:
-#'  `arkhe` uses the following [options()] to configure behavior:
+#'  \pkg{arkhe} uses the following [options()] to configure behavior:
 #'  * `arkhe.verbose`: a [`logical`] scalar. Should \R report extra information
-#'    on progress? Defaults to `TRUE`.
+#'    on progress? Defaults to [interactive()].
 #'
 #' @author
 #'  **Full list of authors and contributors** (alphabetic order):
