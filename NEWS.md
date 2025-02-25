@@ -1,3 +1,7 @@
+# arkhe 1.10.0
+## Internals
+* Update package metadata.
+
 # arkhe 1.9.0
 ## Enhancements
 * Allow `NULL` or empty values in `assert_length()` and `assert_type()`.

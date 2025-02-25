@@ -5,9 +5,6 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/tesselle/arkhe/workflows/R-CMD-check/badge.svg)](https://github.com/tesselle/arkhe/actions)
-[![codecov](https://codecov.io/gh/tesselle/arkhe/branch/main/graph/badge.svg?token=3TUSMmF18Q)](https://app.codecov.io/gh/tesselle/arkhe)
-[![CodeFactor](https://www.codefactor.io/repository/github/tesselle/arkhe/badge/main)](https://www.codefactor.io/repository/github/tesselle/arkhe/overview/main)
 [![Dependencies](https://tinyverse.netlify.app/badge/arkhe)](https://cran.r-project.org/package=arkhe)
 
 <a href="https://tesselle.r-universe.dev/arkhe"
@@ -46,10 +43,10 @@ messages.
 
 To cite arkhe in publications use:
 
-Frerebeau N (2024). *arkhe: Tools for Cleaning Rectangular Data*.
+Frerebeau N (2025). *arkhe: Tools for Cleaning Rectangular Data*.
 Université Bordeaux Montaigne, Pessac, France.
 <doi:10.5281/zenodo.3526659> <https://doi.org/10.5281/zenodo.3526659>, R
-package version 1.9.0, <https://packages.tesselle.org/arkhe/>.
+package version 1.10.0, <https://packages.tesselle.org/arkhe/>.
 
 This package is a part of the tesselle project
 <https://www.tesselle.org>.
@@ -63,11 +60,11 @@ You can install the released version of **arkhe** from
 install.packages("arkhe")
 ```
 
-And the development version from [GitHub](https://github.com/) with:
+And the development version from [Codeberg](https://codeberg.org/) with:
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("tesselle/arkhe")
+remotes::install_git("https://codeberg.org/tesselle/arkhe")
 ```
 
 ## Usage
