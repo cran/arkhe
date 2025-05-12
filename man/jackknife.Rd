@@ -29,7 +29,7 @@ vector with the following elements:
 \item{\code{original}}{The observed value of \code{do} applied to \code{object}.}
 \item{\code{mean}}{The jackknife estimate of mean of \code{do}.}
 \item{\code{bias}}{The jackknife estimate of bias of \code{do}.}
-\item{\code{error}}{he jackknife estimate of standard error of \code{do}.}
+\item{\code{error}}{The jackknife estimate of standard error of \code{do}.}
 }
 
 If \code{f} is a \code{function}, \code{jackknife()} returns the result of \code{f} applied to
@@ -41,16 +41,6 @@ Jackknife Estimation
 \examples{
 x <- rnorm(20)
 
-## Bootstrap
-bootstrap(x, do = mean, n = 100)
-
-## Estimate the 25th and 95th percentiles
-quant <- function(x) { quantile(x, probs = c(0.25, 0.75)) }
-bootstrap(x, n = 100, do = mean, f = quant)
-
-## Get the n bootstrap values
-bootstrap(x, n = 100, do = mean, f = function(x) { x })
-
 ## Jackknife
 jackknife(x, do = mean) # Sample mean
 
@@ -59,7 +49,9 @@ jackknife(x, do = mean, f = function(x) { x })
 }
 \seealso{
 Other resampling methods: 
-\code{\link{bootstrap}()}
+\code{\link{bootstrap}()},
+\code{\link{resample_multinomial}()},
+\code{\link{resample_uniform}()}
 }
 \author{
 N. Frerebeau

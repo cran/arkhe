@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![Code
+coverage](https://packages.tesselle.org/arkhe/coverage/badge.svg)](https://packages.tesselle.org/arkhe/coverage/)
 [![Dependencies](https://tinyverse.netlify.app/badge/arkhe)](https://cran.r-project.org/package=arkhe)
 
 <a href="https://tesselle.r-universe.dev/arkhe"
@@ -46,7 +48,7 @@ To cite arkhe in publications use:
 Frerebeau N (2025). *arkhe: Tools for Cleaning Rectangular Data*.
 Université Bordeaux Montaigne, Pessac, France.
 <doi:10.5281/zenodo.3526659> <https://doi.org/10.5281/zenodo.3526659>, R
-package version 1.10.0, <https://packages.tesselle.org/arkhe/>.
+package version 1.11.0, <https://packages.tesselle.org/arkhe/>.
 
 This package is a part of the tesselle project
 <https://www.tesselle.org>.
@@ -144,7 +146,8 @@ session):
 Sys.setenv(LANGUAGE = "<language code>")
 ```
 
-Languages currently available are English (`en`) and French (`fr`).
+Languages currently available are English (`en`), French (`fr`) and
+Spanish (`es`).
 
 ## Contributing
 

@@ -1,6 +1,6 @@
 Package: arkhe
 Title: Tools for Cleaning Rectangular Data
-Version: 1.10.0
+Version: 1.11.0
 Authors@R: c(
     person("Nicolas", "Frerebeau", , "nicolas.frerebeau@u-bordeaux-montaigne.fr", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-5759-4944")),
@@ -24,7 +24,7 @@ Depends: R (>= 3.5)
 Imports: methods, stats, utils
 Suggests: tinytest
 Encoding: UTF-8
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.2.9000
 X-schema.org-isPartOf: https://www.tesselle.org
 X-schema.org-keywords: data-cleaning, statistics, r-package
 Collate: 'AllGenerics.R' 'append.R' 'predicates.R' 'assert.R'
@@ -34,12 +34,13 @@ Collate: 'AllGenerics.R' 'append.R' 'predicates.R' 'assert.R'
         'mathematics.R' 'remove.R' 'replace.R' 'scale.R' 'seek.R'
         'sparsity.R' 'statistics.R' 'utilities.R' 'zzz.R'
 NeedsCompilation: no
-Packaged: 2025-02-25 16:01:02 UTC; nicolas
-Author: Nicolas Frerebeau [aut, cre] (<https://orcid.org/0000-0001-5759-4944>),
-  Brice Lebrun [art] (<https://orcid.org/0000-0001-7503-8685>, Logo
-    designer),
-  Université Bordeaux Montaigne [fnd] (03pbgwk21),
-  CNRS [fnd] (02feahw73)
+Packaged: 2025-05-12 15:14:41 UTC; nfrerebeau
+Author: Nicolas Frerebeau [aut, cre] (ORCID:
+    <https://orcid.org/0000-0001-5759-4944>),
+  Brice Lebrun [art] (ORCID: <https://orcid.org/0000-0001-7503-8685>,
+    Logo designer),
+  Université Bordeaux Montaigne [fnd] (ROR: <https://ror.org/03pbgwk21>),
+  CNRS [fnd] (ROR: <https://ror.org/02feahw73>)
 Maintainer: Nicolas Frerebeau <nicolas.frerebeau@u-bordeaux-montaigne.fr>
 Repository: CRAN
-Date/Publication: 2025-02-25 16:20:01 UTC
+Date/Publication: 2025-05-12 17:30:02 UTC
